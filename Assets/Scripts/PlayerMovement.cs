@@ -1,44 +1,37 @@
 using UnityEngine;
+using UnityEngine.InputSystem; // You must include this to use the new Input System!
 
 public class PlayerMovement : MonoBehaviour
 {
-    public CharacterController controller;
-    public float speed = 6f;
-    public float gravity = -9.81f;
-    public float jumpHeight = 1.5f;
+    [Header("Movement Settings")]
+    public float moveSpeed = 5f;
 
-    public Transform groundCheck;
-    public float groundDistance = 0.4f;
-    public LayerMask groundMask;
+    private Vector2 moveInput;
+    private Rigidbody rb;
 
-    Vector3 velocity;
-    bool isGrounded;
-
-    void Update()
+    void Start()
     {
-        // Check if player is on the ground
-        isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
+        // Grab the Rigidbody attached to the parent prefab
+        rb = GetComponent<Rigidbody>();
+    }
 
-        if (isGrounded && velocity.y < 0)
-        {
-            velocity.y = -2f;
-        }
+    // The Player Input component automatically calls this function 
+    // because we created an action called "Move"
+    void OnMove(InputValue value)
+    {
+        // Store the joystick/keyboard input (X and Y)
+        moveInput = value.Get<Vector2>();
+    }
 
-        // Movement input
-        float x = Input.GetAxis("Horizontal");
-        float z = Input.GetAxis("Vertical");
+    void FixedUpdate()
+    {
+        // Convert the 2D input (X, Y) into 3D movement (X, Z)
+        Vector3 movement = new Vector3(moveInput.x, 0f, moveInput.y) * moveSpeed;
 
-        Vector3 move = transform.right * x + transform.forward * z;
-        controller.Move(move * speed * Time.deltaTime);
+        // Preserve the current Y velocity so gravity still works!
+        movement.y = rb.velocity.y;
 
-        // Jump
-        if (Input.GetButtonDown("Jump") && isGrounded)
-        {
-            velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
-        }
-
-        // Gravity
-        velocity.y += gravity * Time.deltaTime;
-        controller.Move(velocity * Time.deltaTime);
+        // Apply the movement to the Rigidbody
+        rb.velocity = movement;
     }
 }
