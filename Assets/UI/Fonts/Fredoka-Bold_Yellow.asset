@@ -103,7 +103,7 @@ Material:
     - _FaceColor: {r: 1, g: 1, b: 1, a: 1}
     - _GlowColor: {r: 0, g: 1, b: 0, a: 0.5}
     - _MaskCoord: {r: 0, g: 0, b: 32767, a: 32767}
-    - _OutlineColor: {r: 0.14995982, g: 0.37123778, b: 0.69387203, a: 1}
+    - _OutlineColor: {r: 0.8796226, g: 0.6444799, b: 0.12743773, a: 1}
     - _ReflectFaceColor: {r: 0, g: 0, b: 0, a: 1}
     - _ReflectOutlineColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecularColor: {r: 1, g: 1, b: 1, a: 1}
@@ -167,11 +167,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 71c1514a6bd24e1e882cebbe1904ce04, type: 3}
-  m_Name: Fredoka-Bold SDF
+  m_Name: Fredoka-Bold_Yellow
   m_EditorClassIdentifier: 
-  hashCode: -52766327
+  hashCode: 1636961283
   material: {fileID: -6458007497739821685}
-  materialHashCode: 1122990729
+  materialHashCode: -2144857149
   m_Version: 1.1.0
   m_SourceFontFileGUID: ed19a4c79b0c0bb419b857ba052bb292
   m_SourceFontFile_EditorRef: {fileID: 12800000, guid: ed19a4c79b0c0bb419b857ba052bb292,
