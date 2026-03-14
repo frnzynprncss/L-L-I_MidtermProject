@@ -1,5 +1,5 @@
 using UnityEngine;
-using UnityEngine.InputSystem; // You must include this to use the new Input System!
+using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -9,29 +9,50 @@ public class PlayerMovement : MonoBehaviour
     private Vector2 moveInput;
     private Rigidbody rb;
 
+    // Timer to track how long the player is stunned by a knockback
+    private float stunTimer = 0f;
+
     void Start()
     {
-        // Grab the Rigidbody attached to the parent prefab
         rb = GetComponent<Rigidbody>();
+
+        // --- THE SPAWN OVERRIDE (Brought back from the dead!) ---
+        PlayerInput playerInput = GetComponent<PlayerInput>();
+        GameObject[] spawnPoints = GameObject.FindGameObjectsWithTag("Respawn");
+
+        if (playerInput != null && spawnPoints.Length > 0)
+        {
+            int index = playerInput.playerIndex % spawnPoints.Length;
+            transform.position = spawnPoints[index].transform.position;
+        }
+        // --------------------------------------------------------
     }
 
-    // The Player Input component automatically calls this function 
-    // because we created an action called "Move"
     void OnMove(InputValue value)
     {
-        // Store the joystick/keyboard input (X and Y)
         moveInput = value.Get<Vector2>();
     }
 
     void FixedUpdate()
     {
-        // Convert the 2D input (X, Y) into 3D movement (X, Z)
+        // If we are currently stunned, let physics take over and ignore the joystick
+        if (stunTimer > 0)
+        {
+            stunTimer -= Time.fixedDeltaTime;
+            return;
+        }
+
+        // Standard movement
         Vector3 movement = new Vector3(moveInput.x, 0f, moveInput.y) * moveSpeed;
-
-        // Preserve the current Y velocity so gravity still works!
         movement.y = rb.velocity.y;
-
-        // Apply the movement to the Rigidbody
         rb.velocity = movement;
+    }
+
+    // Called from the Tag script
+    public void ApplyKnockback(Vector3 force, float stunDuration)
+    {
+        stunTimer = stunDuration;
+        rb.velocity = Vector3.zero;
+        rb.AddForce(force, ForceMode.Impulse);
     }
 }
