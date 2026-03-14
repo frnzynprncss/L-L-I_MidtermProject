@@ -1,67 +1,58 @@
-using System.Collections;
 using UnityEngine;
+using System.Collections;
 
-[RequireComponent(typeof(CanvasGroup))]
 public class UISmoother : MonoBehaviour
 {
     [Header("Settings")]
-    public float duration = 0.5f;
-    public Vector3 startScale = new Vector3(0.8f, 0.8f, 0.8f);
+    public CanvasGroup canvasGroup;
+    public float duration = 0.3f;
 
-    private CanvasGroup canvasGroup;
-    private RectTransform rectTransform;
-    private Coroutine currentRoutine;
-
-    void Awake()
+    private void Awake()
     {
-        canvasGroup = GetComponent<CanvasGroup>();
-        rectTransform = GetComponent<RectTransform>();
-
-        // Start hidden
-        canvasGroup.alpha = 0;
-        rectTransform.localScale = startScale;
-        canvasGroup.interactable = false;
-        canvasGroup.blocksRaycasts = false;
+        // Automatically grab the CanvasGroup if you forgot to drag it in
+        if (canvasGroup == null) canvasGroup = GetComponent<CanvasGroup>();
     }
 
     public void ShowPanel()
     {
-        if (currentRoutine != null) StopCoroutine(currentRoutine);
-        currentRoutine = StartCoroutine(Fade(1, Vector3.one, true));
+        StopAllCoroutines();
+        // We ensure the object is active, but the REAL magic is the Alpha
+        gameObject.SetActive(true);
+        StartCoroutine(Fade(canvasGroup.alpha, 1, true));
     }
 
     public void HidePanel()
     {
-        if (currentRoutine != null) StopCoroutine(currentRoutine);
-        currentRoutine = StartCoroutine(Fade(0, startScale, false));
+        StopAllCoroutines();
+        StartCoroutine(Fade(canvasGroup.alpha, 0, false));
     }
 
-    IEnumerator Fade(float targetAlpha, Vector3 targetScale, bool isShowing)
+    private IEnumerator Fade(float start, float end, bool isShowing)
     {
-        float startAlpha = canvasGroup.alpha;
-        Vector3 initialScale = rectTransform.localScale;
-        float time = 0;
-
-        while (time < duration)
+        // If we are showing the panel, make it clickable immediately
+        if (isShowing)
         {
-            time += Time.deltaTime;
-            float lerpTime = time / duration;
+            canvasGroup.interactable = true;
+            canvasGroup.blocksRaycasts = true;
+        }
 
-            // This SmoothStep is what makes it feel "premium"
-            float smoothedTime = Mathf.SmoothStep(0f, 1f, lerpTime);
-
-            canvasGroup.alpha = Mathf.Lerp(startAlpha, targetAlpha, smoothedTime);
-            rectTransform.localScale = Vector3.Lerp(initialScale, targetScale, smoothedTime);
-
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            canvasGroup.alpha = Mathf.Lerp(start, end, elapsed / duration);
             yield return null;
         }
 
-        // Ensure final values are set
-        canvasGroup.alpha = targetAlpha;
-        rectTransform.localScale = targetScale;
+        canvasGroup.alpha = end;
 
-        // Toggle interaction so you can't click invisible buttons
-        canvasGroup.interactable = isShowing;
-        canvasGroup.blocksRaycasts = isShowing;
+        // If we are hiding the panel, disable clicks ONLY after it's invisible
+        if (!isShowing)
+        {
+            canvasGroup.interactable = false;
+            canvasGroup.blocksRaycasts = false;
+            // IMPORTANT: We do NOT call SetActive(false) here. 
+            // We keep it "Active" but invisible so the script stays awake!
+        }
     }
 }
