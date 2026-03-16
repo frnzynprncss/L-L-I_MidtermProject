@@ -2,50 +2,38 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    [Header("Movement Settings")]
-    public float speed = 5f;
-    public float turnSpeed = 10f; // Increased for better responsiveness
-
-    public Rigidbody rb;
-    private Vector3 inputs = Vector3.zero;
+    public float moveSpeed = 5f;
+    private Animator anim;
+    private Rigidbody rb;
 
     void Start()
     {
-        if (rb == null) rb = GetComponent<Rigidbody>();
-
-        // This forces the physics engine to treat the body as an upright pillar
-        rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
-
-        // Optional: Make the body harder to knock over by increasing mass
-        rb.mass = 20f;
+        anim = GetComponent<Animator>();
+        rb = GetComponent<Rigidbody>();
     }
 
     void Update()
     {
-        // Corrected mapping: X is Horizontal, Z is Vertical
-        inputs.x = Input.GetAxisRaw("Horizontal");
-        inputs.z = Input.GetAxisRaw("Vertical");
-    }
+        // Get input from WASD or Arrow Keys
+        float moveX = Input.GetAxis("Horizontal");
+        float moveZ = Input.GetAxis("Vertical");
 
-    private void FixedUpdate()
-    {
-        if (inputs.magnitude > 0.1f)
+        // Calculate movement direction
+        Vector3 movement = new Vector3(moveX, 0, moveZ).normalized;
+
+        // Apply movement to Rigidbody
+        if (movement.magnitude >= 0.1f)
         {
-            // Movement: Use .velocity instead of .linearVelocity
-            Vector3 moveDirection = inputs.normalized;
-            Vector3 targetVelocity = moveDirection * speed;
+            rb.MovePosition(transform.position + movement * moveSpeed * Time.deltaTime);
 
-            // Apply velocity while keeping the current gravity (y)
-            rb.velocity = new Vector3(targetVelocity.x, rb.velocity.y, targetVelocity.z);
+            // Make the player face the direction they are walking
+            transform.forward = movement;
+        }
 
-            // Rotation
-            Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
-            rb.MoveRotation(Quaternion.Slerp(rb.rotation, targetRotation, turnSpeed * Time.fixedDeltaTime));
-        }
-        else
-        {
-            // Stop movement when no input is given
-            rb.velocity = new Vector3(0, rb.velocity.y, 0);
-        }
+        // --- THE ANIMATION PART ---
+        // We send the movement "amount" to the Animator
+        // If movement is 0, it goes to Idle. If it's > 0.1, it walks.
+        float currentSpeed = movement.magnitude;
+        anim.SetFloat("Speed", currentSpeed);
     }
 }
