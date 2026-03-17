@@ -6,13 +6,17 @@ public class PlayerTagController : MonoBehaviour
     [Header("Player State")]
     public bool isIt = false;
 
+    [Header("Score System")]
+    public int score = 0;
+    public string playerName = "Player";
+
     [Header("3D Models")]
     public GameObject normalModel;
     public GameObject itModel;
 
-    [Header("Tag Mechanics")]
-    public float tagRadius = 2.5f; // How far the "It" player's arms reach
-    public float knockbackForce = 15f; // How hard they get pushed away
+    [Header("Tag & Shove Mechanics")]
+    public float tagRadius = 2.5f;
+    public float knockbackForce = 15f;
     public float tagCooldown = 2f;
 
     private float currentCooldown = 0f;
@@ -21,6 +25,10 @@ public class PlayerTagController : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+
+        // Automatically name the player based on their gamepad/keyboard index!
+        playerName = "Player " + (GetComponent<PlayerInput>().playerIndex + 1);
+
         UpdateForm();
     }
 
@@ -32,13 +40,11 @@ public class PlayerTagController : MonoBehaviour
         }
     }
 
-    // The Input System automatically calls this when you press the "Tag" button (Space/Gamepad A)
     void OnTag()
     {
-        // If I am NOT it, or my cooldown isn't finished, I can't tag anyone. Stop here.
-        if (!isIt || currentCooldown > 0) return;
+        // If my cooldown isn't finished, I can't tag OR shove anyone.
+        if (currentCooldown > 0) return;
 
-        // Draw an invisible sphere around me. Who is inside it?
         Collider[] hitColliders = Physics.OverlapSphere(transform.position, tagRadius);
 
         foreach (Collider hit in hitColliders)
@@ -46,44 +52,55 @@ public class PlayerTagController : MonoBehaviour
             // Did I hit a player that is NOT me?
             if (hit.CompareTag("Player") && hit.gameObject != this.gameObject)
             {
-                PlayerTagController otherPlayer = hit.GetComponent<PlayerTagController>();
+                PlayerTagController targetPlayer = hit.GetComponent<PlayerTagController>();
+                PlayerMovement targetMovement = hit.GetComponent<PlayerMovement>();
 
-                // If they exist and aren't already "It"
-                if (otherPlayer != null && !otherPlayer.isIt)
+                if (targetPlayer != null && targetMovement != null)
                 {
-                    // 1. Calculate which direction to knock them back (away from me)
+                    // Calculate which direction to push them
                     Vector3 pushDirection = (hit.transform.position - transform.position).normalized;
+                    pushDirection.y = 0.5f; // Upward pop
 
-                    // Add a tiny bit of upward lift so they pop into the air nicely
-                    pushDirection.y = 0.5f;
+                    // SCENARIO 1: I am "It"
+                    if (isIt)
+                    {
+                        // I can only tag Normal players
+                        if (!targetPlayer.isIt)
+                        {
+                            this.BecomeNormal();
+                            targetPlayer.BecomeIt(pushDirection * knockbackForce);
+                            break;
+                        }
+                    }
+                    // SCENARIO 2: I am a Normal player
+                    else
+                    {
+                        // I can only shove OTHER Normal players. Ignore the "It" player!
+                        if (!targetPlayer.isIt)
+                        {
+                            // Trigger the stun and push them away, but DO NOT change their state!
+                            targetMovement.ApplyKnockback(pushDirection * knockbackForce, 0.5f);
 
-                    // 2. I become normal
-                    this.BecomeNormal();
-
-                    // 3. They become "It" and take the knockback force!
-                    otherPlayer.BecomeIt(pushDirection * knockbackForce);
-
-                    // Stop the loop so we don't accidentally tag two people at the exact same time
-                    break;
+                            // Put the shove on a cooldown so players can't spam the button
+                            currentCooldown = tagCooldown;
+                            break;
+                        }
+                    }
                 }
             }
         }
     }
 
-    // Notice we added the "knockback" variable here
     public void BecomeIt(Vector3 knockbackAmount)
     {
         isIt = true;
         currentCooldown = tagCooldown;
         UpdateForm();
 
-        // NEW: Grab the movement script and trigger the stun!
         PlayerMovement movementScript = GetComponent<PlayerMovement>();
 
-        // If we have a movement script, and the knockback isn't zero (like when the game first starts)
         if (movementScript != null && knockbackAmount != Vector3.zero)
         {
-            // Apply the force, and stun their joystick for 0.5 seconds
             movementScript.ApplyKnockback(knockbackAmount, 0.5f);
         }
     }
@@ -108,7 +125,6 @@ public class PlayerTagController : MonoBehaviour
         }
     }
 
-    // Optional: This draws a wireframe sphere in the Unity Editor so you can see how big your tagRadius is!
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;

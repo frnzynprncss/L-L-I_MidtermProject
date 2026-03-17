@@ -1,48 +1,162 @@
 using UnityEngine;
-using System.Collections; // We need this to use "Coroutines" (timers)
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using TMPro;
+using UnityEngine.InputSystem; // NEW: We need this to count players and stop joining
+using UnityEngine.UI; // NEW: We need this to interact with the Start Button
 
 public class TagGameManager : MonoBehaviour
 {
     [Header("Game Settings")]
-    [Tooltip("How many seconds to wait for players to join before picking an It.")]
-    public float startDelay = 5f;
+    public float matchTimeLimit = 60f;
+
+    [Header("Lobby UI References")]
+    public GameObject lobbyPanel;
+    public TextMeshProUGUI playersJoinedText;
+    public Button startButton;
+
+    [Header("In-Game UI References")]
+    public TextMeshProUGUI resultsText;
+    public TextMeshProUGUI timerText;
+
+    private bool matchIsActive = false;
+    private PlayerInputManager inputManager;
 
     void Start()
     {
-        // Start the countdown timer as soon as the level loads
-        StartCoroutine(AssignItRoutine());
+        // Grab the Input Manager sitting on this exact same GameObject
+        inputManager = GetComponent<PlayerInputManager>();
+
+        // 1. Setup the Lobby state
+        lobbyPanel.SetActive(true);
+        if (resultsText != null) resultsText.text = "";
+        if (timerText != null) timerText.text = "00:00";
+
+        // 2. Tell the Start Button what code to run when clicked!
+        startButton.onClick.AddListener(StartMatchButton_Clicked);
     }
 
-    // A Coroutine is a special function that can pause itself (perfect for timers)
-    IEnumerator AssignItRoutine()
+    void Update()
     {
-        // 1. Wait for the specified amount of seconds
-        yield return new WaitForSeconds(startDelay);
+        // Constantly update the text to show how many people pressed a button to join
+        if (lobbyPanel.activeSelf && playersJoinedText != null)
+        {
+            playersJoinedText.text = "PLAYERS JOINED: " + inputManager.playerCount;
+        }
+    }
 
-        // 2. Find every player that has currently spawned into the scene
+    // This runs the exact moment the UI Start Button is pressed
+    public void StartMatchButton_Clicked()
+    {
+        // Don't let them start the game if nobody has spawned in yet!
+        if (inputManager.playerCount == 0) return;
+
+        // Hide the Lobby Panel
+        lobbyPanel.SetActive(false);
+
+        // Optional: Lock the lobby so nobody else can join mid-match
+        inputManager.DisableJoining();
+
+        // Officially start the match sequence
+        StartCoroutine(MatchRoutine());
+    }
+
+    IEnumerator MatchRoutine()
+    {
+        // 1. PRE-GAME COUNTDOWN (Give them 3 seconds to get ready after clicking Start)
+        float delayTimer = 3f;
+        while (delayTimer > 0)
+        {
+            if (resultsText != null)
+            {
+                resultsText.text = "STARTING IN: " + Mathf.CeilToInt(delayTimer).ToString();
+            }
+            delayTimer -= Time.deltaTime;
+            yield return null;
+        }
+
         PlayerTagController[] allPlayers = FindObjectsOfType<PlayerTagController>();
 
-        // 3. Make sure at least somebody is playing!
         if (allPlayers.Length > 0)
         {
-            // First, force absolutely everyone to be in their "Normal" form just in case
+            int randomIndex = Random.Range(0, allPlayers.Length);
+
             foreach (PlayerTagController player in allPlayers)
             {
                 player.BecomeNormal();
             }
 
-            // Pick a random number from 0 up to the total amount of players
-            int randomIndex = Random.Range(0, allPlayers.Length);
-
-            // Force that randomly selected player to become "It"!
-            // We pass Vector3.zero so they don't get knocked back by the system picking them
             allPlayers[randomIndex].BecomeIt(Vector3.zero);
 
-            Debug.Log("Player at index " + randomIndex + " was randomly chosen as IT!");
+            matchIsActive = true;
+            if (resultsText != null) resultsText.text = "MATCH STARTED!";
+
+            StartCoroutine(ClearResultsText(2f));
+
+            // 2. THE ACTIVE MATCH TIMER
+            float currentTime = matchTimeLimit;
+            while (currentTime > 0)
+            {
+                currentTime -= Time.deltaTime;
+                UpdateTimerDisplay(currentTime);
+                yield return null;
+            }
+
+            // 3. GAME OVER
+            matchIsActive = false;
+            if (timerText != null) timerText.text = "00:00";
+            CalculateAndDisplayRanks(allPlayers);
         }
-        else
+    }
+
+    void UpdateTimerDisplay(float timeToDisplay)
+    {
+        if (timerText == null) return;
+        float secondsLeft = Mathf.CeilToInt(timeToDisplay);
+        float minutes = Mathf.FloorToInt(secondsLeft / 60);
+        float seconds = Mathf.FloorToInt(secondsLeft % 60);
+        timerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+    }
+
+    IEnumerator ClearResultsText(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        if (matchIsActive && resultsText != null)
         {
-            Debug.LogWarning("No players found! Did nobody press join?");
+            resultsText.text = "";
+        }
+    }
+
+    void CalculateAndDisplayRanks(PlayerTagController[] players)
+    {
+        foreach (var player in players)
+        {
+            player.GetComponent<PlayerInput>().DeactivateInput();
+        }
+
+        var groupedPlayers = players.GroupBy(p => p.score)
+                                    .OrderByDescending(g => g.Key)
+                                    .ToList();
+
+        string finalLeaderboard = "GAME OVER\n\n";
+        int rank = 1;
+
+        foreach (var group in groupedPlayers)
+        {
+            List<string> namesInThisRank = new List<string>();
+            foreach (var player in group)
+            {
+                namesInThisRank.Add(player.playerName);
+            }
+            string combinedNames = string.Join(" & ", namesInThisRank);
+            finalLeaderboard += "Rank " + rank + ": " + combinedNames + " - " + group.Key + " Points\n";
+            rank++;
+        }
+
+        if (resultsText != null)
+        {
+            resultsText.text = finalLeaderboard;
         }
     }
 }
