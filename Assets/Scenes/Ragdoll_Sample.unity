@@ -469,9 +469,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f74fb03ee7f897f4eba160c4adcdc60b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 1
-  turnSpeed: 0.15
-  rb: {fileID: 88812115}
+  moveSpeed: 5
 --- !u!1 &90079667 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1790534147060613675, guid: a2c43409d315ceb45a3ceda4dc3b281e,
@@ -833,9 +831,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f74fb03ee7f897f4eba160c4adcdc60b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 5
-  turnSpeed: 0.15
-  rb: {fileID: 88812115}
+  moveSpeed: 5
 --- !u!1 &184732670
 GameObject:
   m_ObjectHideFlags: 0
@@ -935,9 +931,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f74fb03ee7f897f4eba160c4adcdc60b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 5
-  turnSpeed: 0.15
-  rb: {fileID: 1816780955}
+  moveSpeed: 5
 --- !u!1 &340997522
 GameObject:
   m_ObjectHideFlags: 0
@@ -1483,9 +1477,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f74fb03ee7f897f4eba160c4adcdc60b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 1
-  turnSpeed: 0.15
-  rb: {fileID: 553668530}
+  moveSpeed: 5
 --- !u!135 &553668532
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -2998,9 +2990,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f74fb03ee7f897f4eba160c4adcdc60b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 5
-  turnSpeed: 10
-  rb: {fileID: 1129932605}
+  moveSpeed: 5
 --- !u!54 &1129932605
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -4501,9 +4491,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f74fb03ee7f897f4eba160c4adcdc60b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 5
-  turnSpeed: 0.15
-  rb: {fileID: 553668530}
+  moveSpeed: 5
 --- !u!1 &1573097200 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -9117208615066587923, guid: a2c43409d315ceb45a3ceda4dc3b281e,
@@ -6826,7 +6814,7 @@ Transform:
   m_GameObject: {fileID: 442286623837340156}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 4.68, z: 0}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -7371,7 +7359,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 3d07d5582f5831f45ba861a9dc347d85, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -9211,7 +9199,7 @@ Animator:
   m_GameObject: {fileID: 442286623837340156}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 129880b3a9bd5b940a4b63800bda389e, type: 3}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 796f576125ee79546bc37bfe3e4150aa, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 1
@@ -9261,9 +9249,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f74fb03ee7f897f4eba160c4adcdc60b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 5
-  turnSpeed: 10
-  rb: {fileID: 6595712073025896765}
+  moveSpeed: 5
 --- !u!136 &6595712073025896767
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -9932,9 +9918,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f74fb03ee7f897f4eba160c4adcdc60b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 5
-  turnSpeed: 10
-  rb: {fileID: 8481594557009874830}
+  moveSpeed: 5
 --- !u!114 &8481594557009874832
 MonoBehaviour:
   m_ObjectHideFlags: 0
