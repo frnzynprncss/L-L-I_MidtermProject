@@ -50,9 +50,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9529db41ca969b4b88ae8e4c5d5b032, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isIt: 1
+  isIt: 0
+  score: 0
+  playerName: Player
   normalModel: {fileID: 5231054907353383449}
   itModel: {fileID: 7494284036406015383}
+  tagRadius: 2.5
+  knockbackForce: 15
   tagCooldown: 2
 --- !u!136 &123094732205270267
 CapsuleCollider:
@@ -160,6 +164,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: It Mode
+      objectReference: {fileID: 0}
+    - target: {fileID: 4722291174607234679, guid: 2e897b4300e199c4b92f235f3662f8c7,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6273042580434187316, guid: 2e897b4300e199c4b92f235f3662f8c7,
         type: 3}

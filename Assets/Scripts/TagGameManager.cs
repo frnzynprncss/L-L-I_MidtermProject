@@ -3,8 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
-using UnityEngine.InputSystem; // NEW: We need this to count players and stop joining
-using UnityEngine.UI; // NEW: We need this to interact with the Start Button
+using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class TagGameManager : MonoBehaviour
 {
@@ -16,6 +16,11 @@ public class TagGameManager : MonoBehaviour
     public TextMeshProUGUI playersJoinedText;
     public Button startButton;
 
+    [Header("Lobby 3D Showcase")]
+    public GameObject[] displayModels; // Drag your 4 hidden studio models here!
+    public float rotationSpeed = 60f;
+    private int lastPlayerCount = 0;
+
     [Header("In-Game UI References")]
     public TextMeshProUGUI resultsText;
     public TextMeshProUGUI timerText;
@@ -25,46 +30,68 @@ public class TagGameManager : MonoBehaviour
 
     void Start()
     {
-        // Grab the Input Manager sitting on this exact same GameObject
         inputManager = GetComponent<PlayerInputManager>();
 
-        // 1. Setup the Lobby state
         lobbyPanel.SetActive(true);
         if (resultsText != null) resultsText.text = "";
         if (timerText != null) timerText.text = "00:00";
 
-        // 2. Tell the Start Button what code to run when clicked!
         startButton.onClick.AddListener(StartMatchButton_Clicked);
     }
 
     void Update()
     {
-        // Constantly update the text to show how many people pressed a button to join
-        if (lobbyPanel.activeSelf && playersJoinedText != null)
+        if (lobbyPanel.activeSelf)
         {
-            playersJoinedText.text = "PLAYERS JOINED: " + inputManager.playerCount;
+            int currentCount = inputManager.playerCount;
+
+            if (playersJoinedText != null)
+            {
+                playersJoinedText.text = "PLAYERS JOINED: " + currentCount;
+            }
+
+            // If a new player joined, turn on their display model!
+            if (currentCount > lastPlayerCount)
+            {
+                for (int i = lastPlayerCount; i < currentCount; i++)
+                {
+                    if (i < displayModels.Length)
+                    {
+                        displayModels[i].SetActive(true);
+                    }
+                }
+                lastPlayerCount = currentCount;
+            }
+
+            // Make the active display models spin continuously
+            foreach (GameObject model in displayModels)
+            {
+                if (model != null && model.activeSelf)
+                {
+                    model.transform.Rotate(Vector3.up * rotationSpeed * Time.deltaTime);
+                }
+            }
         }
     }
 
-    // This runs the exact moment the UI Start Button is pressed
     public void StartMatchButton_Clicked()
     {
-        // Don't let them start the game if nobody has spawned in yet!
         if (inputManager.playerCount == 0) return;
 
-        // Hide the Lobby Panel
         lobbyPanel.SetActive(false);
-
-        // Optional: Lock the lobby so nobody else can join mid-match
         inputManager.DisableJoining();
 
-        // Officially start the match sequence
+        // Turn off the display models to save performance during the actual game
+        foreach (GameObject model in displayModels)
+        {
+            if (model != null) model.SetActive(false);
+        }
+
         StartCoroutine(MatchRoutine());
     }
 
     IEnumerator MatchRoutine()
     {
-        // 1. PRE-GAME COUNTDOWN (Give them 3 seconds to get ready after clicking Start)
         float delayTimer = 3f;
         while (delayTimer > 0)
         {
@@ -94,7 +121,6 @@ public class TagGameManager : MonoBehaviour
 
             StartCoroutine(ClearResultsText(2f));
 
-            // 2. THE ACTIVE MATCH TIMER
             float currentTime = matchTimeLimit;
             while (currentTime > 0)
             {
@@ -103,7 +129,6 @@ public class TagGameManager : MonoBehaviour
                 yield return null;
             }
 
-            // 3. GAME OVER
             matchIsActive = false;
             if (timerText != null) timerText.text = "00:00";
             CalculateAndDisplayRanks(allPlayers);
