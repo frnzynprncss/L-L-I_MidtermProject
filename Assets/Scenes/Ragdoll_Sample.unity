@@ -504,11 +504,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a47fc7b032f0a6b48b385af9223b0b33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 5
-  pushSpeed: 2
-  jumpForce: 7
+  moveSpeed: 15
+  pushSpeed: 5
+  jumpForce: 20
   pushKey: 303
   jumpKey: 305
+  fallDuration: 1.5
 --- !u!136 &504158227
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -578,10 +579,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.82805824
-  m_Height: 6.634024
+  m_Radius: 1.653217
+  m_Height: 6.700974
   m_Direction: 1
-  m_Center: {x: -0.0005054474, y: 3.373873, z: 3.6174917e-12}
+  m_Center: {x: 0.3644821, y: 3.407348, z: -0.034882423}
 --- !u!95 &504158230
 Animator:
   serializedVersion: 5
@@ -1477,8 +1478,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.02177557, y: 0.021775562, z: 0.02383161}
-  m_Center: {x: -4.186287e-12, y: 3.9868573e-12, z: 0.0012274532}
+  m_Size: {x: 0.02177557, y: 0.021775562, z: 0.022726111}
+  m_Center: {x: -2.3011389e-12, y: 2.191515e-12, z: 0.0006747125}
 --- !u!1 &1529562741
 GameObject:
   m_ObjectHideFlags: 0
@@ -2731,6 +2732,7 @@ MonoBehaviour:
   moveSpeed: 15
   pushSpeed: 5
   jumpForce: 20
+  fallDuration: 1.5
 --- !u!54 &613196816116352847
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2777,10 +2779,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.82805824
-  m_Height: 6.634024
+  m_Radius: 1.7210199
+  m_Height: 6.8873158
   m_Direction: 1
-  m_Center: {x: -0.0005054474, y: 3.373873, z: 3.6174917e-12}
+  m_Center: {x: -0.00050544646, y: 3.5005188, z: -0.023242354}
 --- !u!95 &613196816116352849
 Animator:
   serializedVersion: 5
@@ -8528,6 +8530,7 @@ MonoBehaviour:
   moveSpeed: 5
   pushSpeed: 5
   jumpForce: 7
+  fallDuration: 1.5
 --- !u!136 &5866666020600677475
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -8704,6 +8707,7 @@ MonoBehaviour:
   moveSpeed: 5
   pushSpeed: 2
   jumpForce: 7
+  fallDuration: 1.5
 --- !u!54 &5963392403665545153
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -9121,6 +9125,7 @@ MonoBehaviour:
   moveSpeed: 5
   pushSpeed: 2
   jumpForce: 7
+  fallDuration: 1.5
 --- !u!54 &6354192965809572796
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -9580,6 +9585,7 @@ MonoBehaviour:
   moveSpeed: 5
   pushSpeed: 2
   jumpForce: 10
+  fallDuration: 1.5
 --- !u!136 &6595712073025896767
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -9718,6 +9724,7 @@ MonoBehaviour:
   moveSpeed: 5
   pushSpeed: 2
   jumpForce: 7
+  fallDuration: 1.5
 --- !u!54 &6629027611716697203
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -10011,6 +10018,7 @@ MonoBehaviour:
   moveSpeed: 5
   pushSpeed: 2
   jumpForce: 7
+  fallDuration: 1.5
 --- !u!54 &6755178877336771780
 Rigidbody:
   m_ObjectHideFlags: 0
