@@ -2,18 +2,16 @@ using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(Animator))]
-public class PlayerController : MonoBehaviour
+public class PlayerController_2 : MonoBehaviour
 {
     [Header("Movement Settings")]
     public float moveSpeed = 5f;
     public float pushSpeed = 2f;
     public float jumpForce = 7f;
 
-    [Header("Player 1 Controls")]
-    private string horizontalAxis = "Horizontal";
-    private string verticalAxis = "Vertical";
-    private KeyCode jumpKey = KeyCode.Space;
-    private KeyCode pushKey = KeyCode.E;
+    [Header("Player 2 Specific Keys")]
+    public KeyCode pushKey = KeyCode.RightShift;
+    public KeyCode jumpKey = KeyCode.RightControl;
 
     private Animator anim;
     private Rigidbody rb;
@@ -54,19 +52,17 @@ public class PlayerController : MonoBehaviour
             if (anim != null)
             {
                 anim.SetFloat("Speed", 0);
-                anim.SetBool("isFalling", true); // Sync Animator with timer
+                anim.SetBool("isFalling", true);
             }
             return;
         }
         else
         {
-            // Reset the bool when timer is done
             if (anim != null) anim.SetBool("isFalling", false);
         }
 
-        // 2. INPUT HANDLING
-        float moveX = Input.GetAxisRaw(horizontalAxis);
-        float moveZ = Input.GetAxisRaw(verticalAxis);
+        float moveX = Input.GetAxisRaw("Horizontal2");
+        float moveZ = Input.GetAxisRaw("Vertical2");
         movementInput = new Vector3(moveX, 0, moveZ).normalized;
 
         isPushing = Input.GetKey(pushKey);
@@ -118,11 +114,10 @@ public class PlayerController : MonoBehaviour
     private void OnCollisionStay(Collision collision)
     {
         // Checks every frame you are touching the other player
-        if (Input.GetKey(KeyCode.E))
+        if (Input.GetKey(KeyCode.RightShift))
         {
             Rigidbody otherRb = collision.collider.attachedRigidbody;
 
-            // Ensure we only trigger this if the victim isn't already falling
             if (otherRb != null && !otherRb.isKinematic)
             {
                 Debug.Log("SUCCESS! Pushing " + otherRb.gameObject.name);
@@ -131,7 +126,6 @@ public class PlayerController : MonoBehaviour
                 pushDir.y = 0;
                 otherRb.AddForce(pushDir * 10f, ForceMode.Impulse);
 
-                // Trigger the stun and animation on the victim
                 otherRb.SendMessage("SetFallTimer", fallDuration, SendMessageOptions.DontRequireReceiver);
             }
         }
