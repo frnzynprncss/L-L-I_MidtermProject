@@ -24,6 +24,12 @@ public class PlayerMovement : MonoBehaviour
         // Physics brain is safely on the Parent!
         rb = GetComponent<Rigidbody>();
 
+        // Automatically find the Animator on the active child object if it's empty
+        if (anim == null)
+        {
+            anim = GetComponentInChildren<Animator>();
+        }
+
         // Spawn Logic
         PlayerInput playerInput = GetComponent<PlayerInput>();
         GameObject[] spawnPoints = GameObject.FindGameObjectsWithTag("Respawn");
