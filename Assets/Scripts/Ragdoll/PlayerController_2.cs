@@ -2,19 +2,17 @@ using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(Animator))]
-public class PlayerController : MonoBehaviour
+public class PlayerController_2 : MonoBehaviour
 {
     [Header("Movement Settings")]
     public float moveSpeed = 5f;
     public float pushSpeed = 2f;
     public float jumpForce = 7f;
 
-    [Header("Player 1 Controls")]
-    // Hardcoding these for P1 so they can't be accidentally swapped with P2
-    private string horizontalAxis = "Horizontal"; // Standard WASD/Left-Stick
-    private string verticalAxis = "Vertical";
-    private KeyCode jumpKey = KeyCode.Space;
-    private KeyCode pushKey = KeyCode.E;
+    [Header("Player 2 Specific Keys")]
+    // Hardcoded for P2 (using Arrows/Right Ctrl as an example)
+    public KeyCode pushKey = KeyCode.RightShift;
+    public KeyCode jumpKey = KeyCode.RightControl;
 
     private Animator anim;
     private Rigidbody rb;
@@ -43,15 +41,15 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        // These only look at WASD now (after you fix Step 1)
-        float moveX = Input.GetAxisRaw("Horizontal");
-        float moveZ = Input.GetAxisRaw("Vertical");
+        // Hardcoded to look for "Horizontal2" and "Vertical2" in Input Manager
+        float moveX = Input.GetAxisRaw("Horizontal2");
+        float moveZ = Input.GetAxisRaw("Vertical2");
         movementInput = new Vector3(moveX, 0, moveZ).normalized;
 
-        // Use specific KeyCodes so there is zero overlap
-        isPushing = Input.GetKey(KeyCode.E);
+        isPushing = Input.GetKey(pushKey);
 
-        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
+        // Uses the specific P2 Jump Key
+        if (Input.GetKeyDown(jumpKey) && isGrounded)
         {
             jumpRequested = true;
         }
