@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: b39673c1caa38dd4cb498632757373a1
+guid: 5c2b5662b0088964d809d57f8081e894
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -110,13 +110,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Untitled design (5)_0
+      name: buttons_0
       rect:
         serializedVersion: 2
-        x: 108
-        y: 108
-        width: 1704
-        height: 864
+        x: 191
+        y: 543
+        width: 468
+        height: 142
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -124,8 +124,92 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: dd515cee8a26dbf42890319ffc63558a
-      internalID: 1285535004
+      spriteID: 61e89d461eedb36449959a2311cebd37
+      internalID: 1436060202
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: buttons_1
+      rect:
+        serializedVersion: 2
+        x: 732
+        y: 541
+        width: 458
+        height: 145
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: db59d96acb747b44aac737cd082b249c
+      internalID: -129329
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: buttons_2
+      rect:
+        serializedVersion: 2
+        x: 1256
+        y: 546
+        width: 495
+        height: 142
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 84cd41390ea7d394d92700b7498145a2
+      internalID: 1590735013
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: buttons_3
+      rect:
+        serializedVersion: 2
+        x: 425
+        y: 292
+        width: 504
+        height: 146
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dacb3498d0c202b4f83a9ad3eb072e7c
+      internalID: 1183427457
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: buttons_4
+      rect:
+        serializedVersion: 2
+        x: 1043
+        y: 294
+        width: 487
+        height: 143
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7e16447c7313fc440a8bf900150de4d6
+      internalID: 1232392541
       vertices: []
       indices: 
       edges: []
@@ -133,7 +217,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 2b0dd8a784f3ddd4fad9980b6b8febdf
+    spriteID: 765a5002419a2bb4b9ad9e70073cfce2
     internalID: 0
     vertices: []
     indices: 
@@ -141,7 +225,11 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      Untitled design (5)_0: 1285535004
+      buttons_0: 1436060202
+      buttons_1: -129329
+      buttons_2: 1590735013
+      buttons_3: 1183427457
+      buttons_4: 1232392541
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

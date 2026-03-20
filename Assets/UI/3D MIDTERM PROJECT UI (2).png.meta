@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: b39673c1caa38dd4cb498632757373a1
+guid: 728c0ba9d68ebc9489dfc336e4f8d6eb
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -110,13 +110,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Untitled design (5)_0
+      name: 3D MIDTERM PROJECT UI (2)_0
       rect:
         serializedVersion: 2
-        x: 108
-        y: 108
-        width: 1704
-        height: 864
+        x: 438
+        y: 816
+        width: 1044
+        height: 81
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -124,8 +124,50 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: dd515cee8a26dbf42890319ffc63558a
-      internalID: 1285535004
+      spriteID: d43b955e7fd2b1b4ab98b49afbdb6b33
+      internalID: 416508211
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 3D MIDTERM PROJECT UI (2)_1
+      rect:
+        serializedVersion: 2
+        x: 445
+        y: 705
+        width: 1030
+        height: 67
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cc2d84f91d08c2842aa3c4e9bdace94a
+      internalID: 1759531476
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 3D MIDTERM PROJECT UI (2)_2
+      rect:
+        serializedVersion: 2
+        x: 1185
+        y: 467
+        width: 145
+        height: 146
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9f17806fff23b5e4bb7099ee28388d6b
+      internalID: -545369705
       vertices: []
       indices: 
       edges: []
@@ -133,7 +175,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 2b0dd8a784f3ddd4fad9980b6b8febdf
+    spriteID: d9cfa7eafe9e30e4d96547af545a42ac
     internalID: 0
     vertices: []
     indices: 
@@ -141,7 +183,9 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      Untitled design (5)_0: 1285535004
+      3D MIDTERM PROJECT UI (2)_0: 416508211
+      3D MIDTERM PROJECT UI (2)_1: 1759531476
+      3D MIDTERM PROJECT UI (2)_2: -545369705
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
