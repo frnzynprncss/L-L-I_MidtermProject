@@ -63,6 +63,8 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+
+
     void FixedUpdate()
     {
         // 1. FREEZE CHECK (For pre-game countdowns)
@@ -111,6 +113,12 @@ public class PlayerMovement : MonoBehaviour
         stunTimer = stunDuration;
         rb.velocity = Vector3.zero;
         rb.AddForce(force, ForceMode.Impulse);
+
+        // NEW: Play the knockback/stun animation!
+        if (anim != null)
+        {
+            anim.SetTrigger("Knockback");
+        }
     }
 
     // Called by the PlayerTagController when you swap between the Normal and It models

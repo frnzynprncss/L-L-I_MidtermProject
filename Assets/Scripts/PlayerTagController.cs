@@ -22,9 +22,15 @@ public class PlayerTagController : MonoBehaviour
     private float currentCooldown = 0f;
     private Rigidbody rb;
 
+    // ---> WE ADDED THIS HERE SO ALL FUNCTIONS CAN SEE IT! <---
+    private PlayerMovement movementScript;
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+
+        // Grab the movement script once when the game starts
+        movementScript = GetComponent<PlayerMovement>();
 
         // Automatically name the player based on their gamepad/keyboard index!
         playerName = "Player " + (GetComponent<PlayerInput>().playerIndex + 1);
@@ -42,49 +48,43 @@ public class PlayerTagController : MonoBehaviour
 
     void OnTag()
     {
-        // If my cooldown isn't finished, I can't tag OR shove anyone.
         if (currentCooldown > 0) return;
+
+        // Play the shoving/tagging animation immediately!
+        if (movementScript != null && movementScript.anim != null)
+        {
+            movementScript.anim.SetTrigger("Tag");
+        }
 
         Collider[] hitColliders = Physics.OverlapSphere(transform.position, tagRadius);
 
         foreach (Collider hit in hitColliders)
         {
-            // Did I hit a player that is NOT me?
-            if (hit.CompareTag("Player") && hit.gameObject != this.gameObject)
+            PlayerTagController targetPlayer = hit.GetComponent<PlayerTagController>();
+
+            if (targetPlayer != null && targetPlayer.gameObject != this.gameObject)
             {
-                PlayerTagController targetPlayer = hit.GetComponent<PlayerTagController>();
-                PlayerMovement targetMovement = hit.GetComponent<PlayerMovement>();
+                PlayerMovement targetMovement = targetPlayer.GetComponent<PlayerMovement>();
 
-                if (targetPlayer != null && targetMovement != null)
+                Vector3 pushDirection = (targetPlayer.transform.position - transform.position).normalized;
+                pushDirection.y = 0.5f;
+
+                if (isIt)
                 {
-                    // Calculate which direction to push them
-                    Vector3 pushDirection = (hit.transform.position - transform.position).normalized;
-                    pushDirection.y = 0.5f; // Upward pop
-
-                    // SCENARIO 1: I am "It"
-                    if (isIt)
+                    if (!targetPlayer.isIt)
                     {
-                        // I can only tag Normal players
-                        if (!targetPlayer.isIt)
-                        {
-                            this.BecomeNormal();
-                            targetPlayer.BecomeIt(pushDirection * knockbackForce);
-                            break;
-                        }
+                        this.BecomeNormal();
+                        targetPlayer.BecomeIt(pushDirection * knockbackForce);
+                        break;
                     }
-                    // SCENARIO 2: I am a Normal player
-                    else
+                }
+                else
+                {
+                    if (!targetPlayer.isIt)
                     {
-                        // I can only shove OTHER Normal players. Ignore the "It" player!
-                        if (!targetPlayer.isIt)
-                        {
-                            // Trigger the stun and push them away, but DO NOT change their state!
-                            targetMovement.ApplyKnockback(pushDirection * knockbackForce, 0.5f);
-
-                            // Put the shove on a cooldown so players can't spam the button
-                            currentCooldown = tagCooldown;
-                            break;
-                        }
+                        targetMovement.ApplyKnockback(pushDirection * knockbackForce, 0.5f);
+                        currentCooldown = tagCooldown;
+                        break;
                     }
                 }
             }
@@ -97,8 +97,7 @@ public class PlayerTagController : MonoBehaviour
         currentCooldown = tagCooldown;
         UpdateForm();
 
-        PlayerMovement movementScript = GetComponent<PlayerMovement>();
-
+        // We can just use movementScript directly now!
         if (movementScript != null && knockbackAmount != Vector3.zero)
         {
             movementScript.ApplyKnockback(knockbackAmount, 0.5f);
@@ -132,9 +131,7 @@ public class PlayerTagController : MonoBehaviour
             activeAnim = normalModel.GetComponent<Animator>();
         }
 
-        // --- NEW ADDITION ---
         // Send the active Animator to the PlayerMovement script!
-        PlayerMovement movementScript = GetComponent<PlayerMovement>();
         if (movementScript != null && activeAnim != null)
         {
             movementScript.SetActiveAnimator(activeAnim);
