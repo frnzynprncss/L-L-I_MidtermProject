@@ -121,6 +121,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 5
+  jumpForce: 8
+  groundCheckDistance: 1.1
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  anim: {fileID: 0}
+  canMove: 1
 --- !u!114 &-911345181629526684
 MonoBehaviour:
   m_ObjectHideFlags: 0

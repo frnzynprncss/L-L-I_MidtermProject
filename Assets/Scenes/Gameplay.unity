@@ -251,7 +251,7 @@ GameObject:
   - component: {fileID: 228902420}
   - component: {fileID: 228902419}
   - component: {fileID: 228902418}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: Plane
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -359,7 +359,7 @@ GameObject:
   - component: {fileID: 234484013}
   - component: {fileID: 234484012}
   - component: {fileID: 234484011}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SafePlatform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -582,7 +582,7 @@ AudioListener:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 262178581}
-  m_Enabled: 1
+  m_Enabled: 0
 --- !u!20 &262178585
 Camera:
   m_ObjectHideFlags: 0
@@ -1923,6 +1923,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 5
+  jumpForce: 8
+  groundCheckDistance: 1.1
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  anim: {fileID: 0}
+  canMove: 1
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -3345,6 +3352,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 5
+  jumpForce: 8
+  groundCheckDistance: 1.1
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  anim: {fileID: 0}
+  canMove: 1
 --- !u!1 &1898789524 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 343965310470933083, guid: 3f0e06968f74130449ceeaf6eabb8ae9,
