@@ -113,15 +113,31 @@ public class PlayerTagController : MonoBehaviour
 
     void UpdateForm()
     {
+        Animator activeAnim = null;
+
         if (isIt)
         {
             normalModel.SetActive(false);
             itModel.SetActive(true);
+
+            // Grab the Animator from the newly activated IT model
+            activeAnim = itModel.GetComponent<Animator>();
         }
         else
         {
             itModel.SetActive(false);
             normalModel.SetActive(true);
+
+            // Grab the Animator from the newly activated Normal model
+            activeAnim = normalModel.GetComponent<Animator>();
+        }
+
+        // --- NEW ADDITION ---
+        // Send the active Animator to the PlayerMovement script!
+        PlayerMovement movementScript = GetComponent<PlayerMovement>();
+        if (movementScript != null && activeAnim != null)
+        {
+            movementScript.SetActiveAnimator(activeAnim);
         }
     }
 
