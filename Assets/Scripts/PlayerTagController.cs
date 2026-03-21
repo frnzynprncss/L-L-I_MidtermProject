@@ -22,13 +22,6 @@ public class PlayerTagController : MonoBehaviour
     private float currentCooldown = 0f;
     private Rigidbody rb;
 
-    //added these
-    [Header("Player Info")]
-    public string playerName = "Player"; // Added for the Leaderboard
-    public int playerID;
-    public int score = 0;
-    public bool isIt = false;
-
     // ---> WE ADDED THIS HERE SO ALL FUNCTIONS CAN SEE IT! <---
     private PlayerMovement movementScript;
 
