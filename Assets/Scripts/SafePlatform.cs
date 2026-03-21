@@ -6,12 +6,16 @@ public class SafePlatform : MonoBehaviour
     [Header("Levitation Cycle")]
     public float liftHeight = 5f;
     public float liftSpeed = 3f;
-    public float timeAtBottom = 5f;
+
+    // CHANGED: Replaced the single timeAtBottom with a min and max range
+    public float minTimeAtBottom = 3f;
+    public float maxTimeAtBottom = 8f;
+
     public float timeAtTop = 4f;
 
     [Header("Detection Settings")]
-    public float antiCrushDistance = 1.5f; // How far below to look for players
-    public Vector3 boxSize = new Vector3(2f, 0.5f, 2f); // The width of the "safety check"
+    public float antiCrushDistance = 1.5f;
+    public Vector3 boxSize = new Vector3(2f, 0.5f, 2f);
 
     [Header("Anti-IT Forcefield")]
     public float repelForce = 25f;
@@ -32,10 +36,8 @@ public class SafePlatform : MonoBehaviour
 
     void Update()
     {
-        // SAFETY CHECK: If we are moving DOWN, check if a player is underneath
         if (targetPosition == startPosition && IsPlayerUnderneath())
         {
-            // STOP MOVING! Wait for the player to leave.
             return;
         }
 
@@ -44,13 +46,12 @@ public class SafePlatform : MonoBehaviour
 
     bool IsPlayerUnderneath()
     {
-        // This creates an invisible box below the cloud to see if a player is trapped
         RaycastHit hit;
         if (Physics.BoxCast(transform.position, boxSize, Vector3.down, out hit, transform.rotation, antiCrushDistance))
         {
             if (hit.collider.CompareTag("Player"))
             {
-                return true; // A player is in the way!
+                return true;
             }
         }
         return false;
@@ -58,13 +59,19 @@ public class SafePlatform : MonoBehaviour
 
     IEnumerator PlatformCycleRoutine()
     {
+        // NEW: Add a random delay right at the start so all platforms instantly desync when the game loads
+        yield return new WaitForSeconds(Random.Range(0f, maxTimeAtBottom));
+
         while (true)
         {
             // 1. AT BOTTOM
             isActive = false;
             if (platformCollider != null) platformCollider.enabled = false;
             targetPosition = startPosition;
-            yield return new WaitForSeconds(timeAtBottom);
+
+            // CHANGED: Pick a random wait time for this specific cycle
+            float randomWaitTime = Random.Range(minTimeAtBottom, maxTimeAtBottom);
+            yield return new WaitForSeconds(randomWaitTime);
 
             // 2. GOING UP
             isActive = true;
@@ -95,13 +102,12 @@ public class SafePlatform : MonoBehaviour
             if (tagController != null && movement != null && tagController.isIt)
             {
                 Vector3 pushDirection = (collision.transform.position - transform.position);
-                pushDirection.y = 0.2f; // Always nudge slightly UP, never down
+                pushDirection.y = 0.2f;
                 movement.ApplyKnockback(pushDirection.normalized * repelForce, stunTime);
             }
         }
     }
 
-    // Visualizes the safety box in the Scene view so you can see it working
     void OnDrawGizmos()
     {
         Gizmos.color = Color.yellow;

@@ -19,9 +19,12 @@ public class PlayerTagController : MonoBehaviour
     public float knockbackForce = 15f;
     public float tagCooldown = 2f;
 
+    // ---> WE ADDED THIS HERE! <---
+    [Tooltip("How many seconds the player is frozen after being shoved.")]
+    public float stunDuration = 3f;
+
     private float currentCooldown = 0f;
     private Rigidbody rb;
-
 
     // ---> WE ADDED THIS HERE SO ALL FUNCTIONS CAN SEE IT! <---
     private PlayerMovement movementScript;
@@ -83,7 +86,8 @@ public class PlayerTagController : MonoBehaviour
                 {
                     if (!targetPlayer.isIt)
                     {
-                        targetMovement.ApplyKnockback(pushDirection * knockbackForce, 0.5f);
+                        // ---> UPDATED: Using stunDuration instead of 0.5f <---
+                        targetMovement.ApplyKnockback(pushDirection * knockbackForce, stunDuration);
                         currentCooldown = tagCooldown;
                         break;
                     }
@@ -98,10 +102,10 @@ public class PlayerTagController : MonoBehaviour
         currentCooldown = tagCooldown;
         UpdateForm();
 
-        // We can just use movementScript directly now!
+        // ---> UPDATED: Using stunDuration instead of 0.5f <---
         if (movementScript != null && knockbackAmount != Vector3.zero)
         {
-            movementScript.ApplyKnockback(knockbackAmount, 0.5f);
+            movementScript.ApplyKnockback(knockbackAmount, stunDuration);
         }
     }
 
