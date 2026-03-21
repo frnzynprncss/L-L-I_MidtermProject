@@ -91,18 +91,23 @@ public class PlayerTagController : MonoBehaviour
         }
     }
 
-    public void BecomeIt(Vector3 spawnPos)
+    public void BecomeIt(Vector3 knockbackAmount)
     {
         isIt = true;
-        // Add visual changes here (e.g., change color to Red)
-        Debug.Log(playerName + " is IT!");
+        currentCooldown = tagCooldown;
+        UpdateForm();
+
+        // We can just use movementScript directly now!
+        if (movementScript != null && knockbackAmount != Vector3.zero)
+        {
+            movementScript.ApplyKnockback(knockbackAmount, 0.5f);
+        }
     }
 
     public void BecomeNormal()
     {
         isIt = false;
-        // Add visual changes here (e.g., change color to Blue)
-        Debug.Log(playerName + " is a Runner!");
+        UpdateForm();
     }
 
     void UpdateForm()
