@@ -22,6 +22,13 @@ public class PlayerTagController : MonoBehaviour
     private float currentCooldown = 0f;
     private Rigidbody rb;
 
+    //added these
+    [Header("Player Info")]
+    public string playerName = "Player"; // Added for the Leaderboard
+    public int playerID;
+    public int score = 0;
+    public bool isIt = false;
+
     // ---> WE ADDED THIS HERE SO ALL FUNCTIONS CAN SEE IT! <---
     private PlayerMovement movementScript;
 
@@ -91,23 +98,18 @@ public class PlayerTagController : MonoBehaviour
         }
     }
 
-    public void BecomeIt(Vector3 knockbackAmount)
+    public void BecomeIt(Vector3 spawnPos)
     {
         isIt = true;
-        currentCooldown = tagCooldown;
-        UpdateForm();
-
-        // We can just use movementScript directly now!
-        if (movementScript != null && knockbackAmount != Vector3.zero)
-        {
-            movementScript.ApplyKnockback(knockbackAmount, 0.5f);
-        }
+        // Add visual changes here (e.g., change color to Red)
+        Debug.Log(playerName + " is IT!");
     }
 
     public void BecomeNormal()
     {
         isIt = false;
-        UpdateForm();
+        // Add visual changes here (e.g., change color to Blue)
+        Debug.Log(playerName + " is a Runner!");
     }
 
     void UpdateForm()

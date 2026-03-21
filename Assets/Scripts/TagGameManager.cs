@@ -17,7 +17,7 @@ public class TagGameManager : MonoBehaviour
     public Button startButton;
 
     [Header("Lobby 3D Showcase")]
-    public GameObject[] displayModels; // Drag your 4 hidden studio models here!
+    public GameObject[] displayModels;
     public float rotationSpeed = 60f;
     private int lastPlayerCount = 0;
 
@@ -32,16 +32,16 @@ public class TagGameManager : MonoBehaviour
     {
         inputManager = GetComponent<PlayerInputManager>();
 
-        lobbyPanel.SetActive(true);
+        if (lobbyPanel != null) lobbyPanel.SetActive(true);
         if (resultsText != null) resultsText.text = "";
         if (timerText != null) timerText.text = "00:00";
 
-        startButton.onClick.AddListener(StartMatchButton_Clicked);
+        if (startButton != null) startButton.onClick.AddListener(StartMatchButton_Clicked);
     }
 
     void Update()
     {
-        if (lobbyPanel.activeSelf)
+        if (lobbyPanel != null && lobbyPanel.activeSelf)
         {
             int currentCount = inputManager.playerCount;
 
@@ -50,12 +50,11 @@ public class TagGameManager : MonoBehaviour
                 playersJoinedText.text = "PLAYERS JOINED: " + currentCount;
             }
 
-            // If a new player joined, turn on their display model!
             if (currentCount > lastPlayerCount)
             {
                 for (int i = lastPlayerCount; i < currentCount; i++)
                 {
-                    if (i < displayModels.Length)
+                    if (i < displayModels.Length && displayModels[i] != null)
                     {
                         displayModels[i].SetActive(true);
                     }
@@ -63,7 +62,6 @@ public class TagGameManager : MonoBehaviour
                 lastPlayerCount = currentCount;
             }
 
-            // Make the active display models spin continuously
             foreach (GameObject model in displayModels)
             {
                 if (model != null && model.activeSelf)
@@ -81,7 +79,6 @@ public class TagGameManager : MonoBehaviour
         lobbyPanel.SetActive(false);
         inputManager.DisableJoining();
 
-        // Turn off the display models to save performance during the actual game
         foreach (GameObject model in displayModels)
         {
             if (model != null) model.SetActive(false);
@@ -96,9 +93,8 @@ public class TagGameManager : MonoBehaviour
         while (delayTimer > 0)
         {
             if (resultsText != null)
-            {
                 resultsText.text = "STARTING IN: " + Mathf.CeilToInt(delayTimer).ToString();
-            }
+
             delayTimer -= Time.deltaTime;
             yield return null;
         }
@@ -107,6 +103,13 @@ public class TagGameManager : MonoBehaviour
 
         if (allPlayers.Length > 0)
         {
+            // Give players default names if they are empty
+            for (int i = 0; i < allPlayers.Length; i++)
+            {
+                if (string.IsNullOrEmpty(allPlayers[i].playerName))
+                    allPlayers[i].playerName = "Player " + (i + 1);
+            }
+
             int randomIndex = Random.Range(0, allPlayers.Length);
 
             foreach (PlayerTagController player in allPlayers)
@@ -138,7 +141,7 @@ public class TagGameManager : MonoBehaviour
     void UpdateTimerDisplay(float timeToDisplay)
     {
         if (timerText == null) return;
-        float secondsLeft = Mathf.CeilToInt(timeToDisplay);
+        float secondsLeft = Mathf.Max(0, timeToDisplay);
         float minutes = Mathf.FloorToInt(secondsLeft / 60);
         float seconds = Mathf.FloorToInt(secondsLeft % 60);
         timerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
@@ -157,31 +160,24 @@ public class TagGameManager : MonoBehaviour
     {
         foreach (var player in players)
         {
-            player.GetComponent<PlayerInput>().DeactivateInput();
+            var input = player.GetComponent<PlayerInput>();
+            if (input != null) input.DeactivateInput();
         }
 
-        var groupedPlayers = players.GroupBy(p => p.score)
-                                    .OrderByDescending(g => g.Key)
-                                    .ToList();
+        var sortedGroups = players.GroupBy(p => p.score)
+                                   .OrderByDescending(g => g.Key)
+                                   .ToList();
 
         string finalLeaderboard = "GAME OVER\n\n";
         int rank = 1;
 
-        foreach (var group in groupedPlayers)
+        foreach (var group in sortedGroups)
         {
-            List<string> namesInThisRank = new List<string>();
-            foreach (var player in group)
-            {
-                namesInThisRank.Add(player.playerName);
-            }
-            string combinedNames = string.Join(" & ", namesInThisRank);
-            finalLeaderboard += "Rank " + rank + ": " + combinedNames + " - " + group.Key + " Points\n";
+            string names = string.Join(" & ", group.Select(p => p.playerName));
+            finalLeaderboard += $"Rank {rank}: {names} - {group.Key} pts\n";
             rank++;
         }
 
-        if (resultsText != null)
-        {
-            resultsText.text = finalLeaderboard;
-        }
+        if (resultsText != null) resultsText.text = finalLeaderboard;
     }
 }
