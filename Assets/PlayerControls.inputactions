@@ -103,6 +103,17 @@
                 },
                 {
                     "name": "",
+                    "id": "a5e7c04c-46eb-4190-afde-0095817cb619",
+                    "path": "<Joystick>/stick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "22d8b14c-9687-4d69-9c2b-7f35749cee0e",
                     "path": "<Keyboard>/e",
                     "interactions": "",
@@ -125,6 +136,17 @@
                 },
                 {
                     "name": "",
+                    "id": "553fcc50-03e5-493c-9fd2-ef5d60978dd1",
+                    "path": "<HID::Microntek              USB Joystick          >/button4",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Tag",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "7b40f5de-022c-4aee-899c-efaee2c9f8d3",
                     "path": "<Keyboard>/space",
                     "interactions": "",
@@ -138,6 +160,17 @@
                     "name": "",
                     "id": "f61c36b0-1e9c-4b1b-b2f1-b978d420bc78",
                     "path": "<HID:: USB Gamepad          >/button3",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "8c46c947-3a94-4eb0-8a78-dcf0f20ebed5",
+                    "path": "<HID::Microntek              USB Joystick          >/button3",
                     "interactions": "",
                     "processors": "",
                     "groups": "",

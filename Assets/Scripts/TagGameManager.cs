@@ -92,7 +92,7 @@ public class TagGameManager : MonoBehaviour
 
     IEnumerator MatchRoutine()
     {
-        float delayTimer = 3f;
+        float delayTimer = 5f;
         while (delayTimer > 0)
         {
             if (resultsText != null)

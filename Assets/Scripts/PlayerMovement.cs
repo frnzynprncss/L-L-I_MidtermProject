@@ -17,7 +17,7 @@ public class PlayerMovement : MonoBehaviour
 
     private Vector2 moveInput;
     private Rigidbody rb;
-    private float stunTimer = 0f;
+    public float stunTimer = 0f;
 
     void Start()
     {
