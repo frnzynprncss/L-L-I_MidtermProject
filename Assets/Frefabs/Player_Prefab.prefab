@@ -59,6 +59,8 @@ MonoBehaviour:
   playerName: Player
   normalModel: {fileID: 2921199895325164906}
   itModel: {fileID: 8549021303364826156}
+  normalSpeed: 15
+  itSpeed: 15.5
   tagRadius: 3.5
   knockbackForce: 15
   tagCooldown: 2
@@ -133,6 +135,7 @@ MonoBehaviour:
     m_Bits: 256
   anim: {fileID: 0}
   canMove: 1
+  isPlayingCutscene: 0
   audioSource: {fileID: 306982882605844543}
   jumpSound: {fileID: 8300000, guid: 7ebc8e18a213abd4a955620dd325294e, type: 3}
   knockbackSound: {fileID: 8300000, guid: 67163a6e43fe2db48b7df5169c731b57, type: 3}

@@ -14,6 +14,10 @@ public class PlayerTagController : MonoBehaviour
     public GameObject normalModel;
     public GameObject itModel;
 
+    [Header("Speed Settings")]
+    public float normalSpeed = 6f; // How fast normal players run
+    public float itSpeed = 8f;     // How fast the IT runs
+
     [Header("Tag & Shove Mechanics")]
     public float tagRadius = 2.5f;
     public float knockbackForce = 15f;
@@ -26,23 +30,26 @@ public class PlayerTagController : MonoBehaviour
     private Rigidbody rb;
 
     private PlayerMovement movementScript;
-    // ---> NEW: We need to talk to PlayerAppearance to update the HUD <---
     private PlayerAppearance appearanceScript;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         movementScript = GetComponent<PlayerMovement>();
-
-        // Grab the appearance script once
         appearanceScript = GetComponent<PlayerAppearance>();
 
-        
-
+        // Name the player based on their gamepad/keyboard index
         playerName = "Player " + (GetComponent<PlayerInput>().playerIndex + 1);
 
         UpdateForm();
 
+        // Set their starting speed immediately
+        if (movementScript != null)
+        {
+            movementScript.SetSpeed(isIt ? itSpeed : normalSpeed);
+        }
+
+        // Tell the Dynamic Camera to track this player
         if (DynamicCamera.Instance != null)
         {
             DynamicCamera.Instance.AddPlayer(this.transform);
@@ -57,7 +64,7 @@ public class PlayerTagController : MonoBehaviour
         }
     }
 
-    // ---> NEW METHOD: The Orb will call this when collected <---
+    // The Orb will call this when collected
     public void AddScore(int amount)
     {
         // 1. Increase the internal score
@@ -120,10 +127,16 @@ public class PlayerTagController : MonoBehaviour
         currentCooldown = tagCooldown;
         UpdateForm();
 
-        // ---> NEW: Tell the Appearance script we are IT so it turns the HUD Red <---
+        // Tell the Appearance script we are IT so it turns the HUD Red
         if (appearanceScript != null)
         {
             appearanceScript.UpdateVisuals();
+        }
+
+        // Give them the IT speed boost!
+        if (movementScript != null)
+        {
+            movementScript.SetSpeed(itSpeed);
         }
 
         if (movementScript != null && knockbackAmount != Vector3.zero)
@@ -137,10 +150,16 @@ public class PlayerTagController : MonoBehaviour
         isIt = false;
         UpdateForm();
 
-        // ---> NEW: Tell the Appearance script we are Normal so it turns the HUD back to color <---
+        // Tell the Appearance script we are Normal so it turns the HUD back to color
         if (appearanceScript != null)
         {
             appearanceScript.UpdateVisuals();
+        }
+
+        // Slow them back down to normal speed!
+        if (movementScript != null)
+        {
+            movementScript.SetSpeed(normalSpeed);
         }
     }
 
@@ -150,8 +169,6 @@ public class PlayerTagController : MonoBehaviour
 
         if (isIt)
         {
-            // Note: Your PlayerAppearance script is already handling the SetActive(true/false) 
-            // for the models, but if you want to keep this here for the Animator, that's fine!
             normalModel.SetActive(false);
             itModel.SetActive(true);
 
@@ -168,15 +185,6 @@ public class PlayerTagController : MonoBehaviour
         if (movementScript != null && activeAnim != null)
         {
             movementScript.SetActiveAnimator(activeAnim);
-        }
-    }
-
-    // Add this inside your player script that handles input
-    public void OnPause() // This method name must match your Input Action name!
-    {
-        if (PauseManager.Instance != null)
-        {
-            PauseManager.Instance.TogglePause();
         }
     }
 
