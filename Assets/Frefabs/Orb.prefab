@@ -119,4 +119,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pointValue: 1
-  collectSound: {fileID: 8300000, guid: cc9e4844f87256843a0798f909ba86e3, type: 3}
+  collectSound: {fileID: 8300000, guid: dcfe736b50186de49a2100bc9ab28bbf, type: 3}
