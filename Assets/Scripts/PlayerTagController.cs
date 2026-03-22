@@ -37,9 +37,16 @@ public class PlayerTagController : MonoBehaviour
         // Grab the appearance script once
         appearanceScript = GetComponent<PlayerAppearance>();
 
+        
+
         playerName = "Player " + (GetComponent<PlayerInput>().playerIndex + 1);
 
         UpdateForm();
+
+        if (DynamicCamera.Instance != null)
+        {
+            DynamicCamera.Instance.AddPlayer(this.transform);
+        }
     }
 
     void Update()
