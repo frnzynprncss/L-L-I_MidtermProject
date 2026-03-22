@@ -5937,7 +5937,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &309692152
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5968,8 +5968,7 @@ Transform:
   m_LocalPosition: {x: -20.091146, y: 16.242662, z: -16.50955}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 330585546}
+  m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &323893763
@@ -6015,6 +6014,7 @@ GameObject:
   - component: {fileID: 330585545}
   - component: {fileID: 330585544}
   - component: {fileID: 330585547}
+  - component: {fileID: 330585548}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -6090,11 +6090,11 @@ Transform:
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
   m_LocalRotation: {x: 0.35708928, y: -0, z: -0, w: 0.9340703}
-  m_LocalPosition: {x: 0, y: 50.25734, z: -59.590446}
+  m_LocalPosition: {x: -20.091146, y: 66.5, z: -76.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 309692153}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 41.843, y: 0, z: 0}
 --- !u!114 &330585547
 MonoBehaviour:
@@ -6140,6 +6140,24 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
+--- !u!114 &330585548
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 330585543}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fb8c3e8184b0b64d83ad709b9353156, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targets: []
+  offset: {x: 0, y: 58.2, z: -65.64}
+  smoothTime: 0.5
+  maxZoomFOV: 10
+  minZoomFOV: 80
+  zoomLimiter: 30
 --- !u!1 &336024992
 GameObject:
   m_ObjectHideFlags: 0
@@ -6737,6 +6755,52 @@ MonoBehaviour:
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 1
+--- !u!1 &423473849
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 423473851}
+  - component: {fileID: 423473850}
+  m_Layer: 0
+  m_Name: Cutscene
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &423473850
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 423473849}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f49b1cd9232af214ca1cdd9c8ccf6a2d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cutsceneDuration: 4
+  introAnimationTrigger: PlayIntro
+--- !u!4 &423473851
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 423473849}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!64 &444083601
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -12872,6 +12936,7 @@ MonoBehaviour:
     m_Bits: 0
   anim: {fileID: 0}
   canMove: 1
+  isPlayingCutscene: 0
   audioSource: {fileID: 0}
   jumpSound: {fileID: 0}
   knockbackSound: {fileID: 0}
@@ -26131,6 +26196,7 @@ MonoBehaviour:
     m_Bits: 0
   anim: {fileID: 0}
   canMove: 1
+  isPlayingCutscene: 0
   audioSource: {fileID: 0}
   jumpSound: {fileID: 0}
   knockbackSound: {fileID: 0}
@@ -29354,6 +29420,7 @@ GameObject:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 330585546}
   - {fileID: 309692153}
   - {fileID: 410087041}
   - {fileID: 832575519}
@@ -29372,3 +29439,4 @@ SceneRoots:
   - {fileID: 993729897}
   - {fileID: 1606429778}
   - {fileID: 543450652019009516}
+  - {fileID: 423473851}

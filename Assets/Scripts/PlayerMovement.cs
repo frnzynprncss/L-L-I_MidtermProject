@@ -13,7 +13,9 @@ public class PlayerMovement : MonoBehaviour
     public Animator anim;
     public bool canMove = true;
 
-    // ---> NEW: AUDIO SETTINGS! <---
+    // ---> NEW: Cutscene Lock <---
+    public bool isPlayingCutscene = false;
+
     [Header("Audio")]
     public AudioSource audioSource;
     public AudioClip jumpSound;
@@ -27,7 +29,6 @@ public class PlayerMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
 
-        // Grab the Audio Source on the player
         if (audioSource == null) audioSource = GetComponent<AudioSource>();
 
         PlayerInput playerInput = GetComponent<PlayerInput>();
@@ -42,18 +43,22 @@ public class PlayerMovement : MonoBehaviour
 
     void OnMove(InputValue value)
     {
-        if (canMove) moveInput = value.Get<Vector2>();
+        // Ignore the controller if we are in a cutscene
+        if (canMove && !isPlayingCutscene)
+        {
+            moveInput = value.Get<Vector2>();
+        }
     }
 
     void OnJump(InputValue value)
     {
-        if (canMove && value.isPressed && stunTimer <= 0 && IsGrounded())
+        // Ignore the controller if we are in a cutscene
+        if (canMove && !isPlayingCutscene && value.isPressed && stunTimer <= 0 && IsGrounded())
         {
             rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             if (anim != null) anim.SetTrigger("Jump");
 
-            // ---> NEW: Play Jump Sound! <---
             if (audioSource != null && jumpSound != null)
             {
                 audioSource.PlayOneShot(jumpSound);
@@ -63,16 +68,16 @@ public class PlayerMovement : MonoBehaviour
 
     void FixedUpdate()
     {
+        // 1. Handle Stuns (Knockback)
         if (stunTimer > 0)
         {
             stunTimer -= Time.fixedDeltaTime;
-
             if (stunTimer <= 0) canMove = true;
-
             if (anim != null) anim.SetFloat("Speed", 0f);
             return;
         }
 
+        // 2. Handle Stun Freezing
         if (!canMove)
         {
             rb.velocity = new Vector3(0, rb.velocity.y, 0);
@@ -80,6 +85,8 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
+        // 3. Normal Movement & Cutscene Handling
+        // If we are in a cutscene, moveInput is automatically Vector2.zero because we ignored the controller!
         Vector3 movement = new Vector3(moveInput.x, 0f, moveInput.y) * moveSpeed;
         movement.y = rb.velocity.y;
         rb.velocity = movement;
@@ -109,7 +116,6 @@ public class PlayerMovement : MonoBehaviour
 
         if (anim != null) anim.SetTrigger("Knockback");
 
-        // ---> NEW: Play Knockback Sound! <---
         if (audioSource != null && knockbackSound != null)
         {
             audioSource.PlayOneShot(knockbackSound);
@@ -124,5 +130,10 @@ public class PlayerMovement : MonoBehaviour
     public void ResetInput()
     {
         moveInput = Vector2.zero;
+    }
+
+    public void SetSpeed(float newSpeed)
+    {
+        moveSpeed = newSpeed;
     }
 }
