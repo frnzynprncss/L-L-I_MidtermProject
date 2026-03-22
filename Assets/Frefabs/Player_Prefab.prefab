@@ -133,7 +133,7 @@ MonoBehaviour:
     m_Bits: 256
   anim: {fileID: 0}
   canMove: 1
-  audioSource: {fileID: 0}
+  audioSource: {fileID: 306982882605844543}
   jumpSound: {fileID: 0}
   knockbackSound: {fileID: 0}
 --- !u!114 &-911345181629526684

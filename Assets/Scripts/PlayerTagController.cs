@@ -19,24 +19,24 @@ public class PlayerTagController : MonoBehaviour
     public float knockbackForce = 15f;
     public float tagCooldown = 2f;
 
-    // ---> WE ADDED THIS HERE! <---
     [Tooltip("How many seconds the player is frozen after being shoved.")]
     public float stunDuration = 3f;
 
     private float currentCooldown = 0f;
     private Rigidbody rb;
 
-    // ---> WE ADDED THIS HERE SO ALL FUNCTIONS CAN SEE IT! <---
     private PlayerMovement movementScript;
+    // ---> NEW: We need to talk to PlayerAppearance to update the HUD <---
+    private PlayerAppearance appearanceScript;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-
-        // Grab the movement script once when the game starts
         movementScript = GetComponent<PlayerMovement>();
 
-        // Automatically name the player based on their gamepad/keyboard index!
+        // Grab the appearance script once
+        appearanceScript = GetComponent<PlayerAppearance>();
+
         playerName = "Player " + (GetComponent<PlayerInput>().playerIndex + 1);
 
         UpdateForm();
@@ -50,11 +50,23 @@ public class PlayerTagController : MonoBehaviour
         }
     }
 
+    // ---> NEW METHOD: The Orb will call this when collected <---
+    public void AddScore(int amount)
+    {
+        // 1. Increase the internal score
+        score += amount;
+
+        // 2. Tell the Appearance script to update the UI panel
+        if (appearanceScript != null)
+        {
+            appearanceScript.AddScoreToHUD(score);
+        }
+    }
+
     void OnTag()
     {
         if (currentCooldown > 0) return;
 
-        // Play the shoving/tagging animation immediately!
         if (movementScript != null && movementScript.anim != null)
         {
             movementScript.anim.SetTrigger("Tag");
@@ -86,7 +98,6 @@ public class PlayerTagController : MonoBehaviour
                 {
                     if (!targetPlayer.isIt)
                     {
-                        // ---> UPDATED: Using stunDuration instead of 0.5f <---
                         targetMovement.ApplyKnockback(pushDirection * knockbackForce, stunDuration);
                         currentCooldown = tagCooldown;
                         break;
@@ -102,7 +113,12 @@ public class PlayerTagController : MonoBehaviour
         currentCooldown = tagCooldown;
         UpdateForm();
 
-        // ---> UPDATED: Using stunDuration instead of 0.5f <---
+        // ---> NEW: Tell the Appearance script we are IT so it turns the HUD Red <---
+        if (appearanceScript != null)
+        {
+            appearanceScript.UpdateVisuals();
+        }
+
         if (movementScript != null && knockbackAmount != Vector3.zero)
         {
             movementScript.ApplyKnockback(knockbackAmount, stunDuration);
@@ -113,6 +129,12 @@ public class PlayerTagController : MonoBehaviour
     {
         isIt = false;
         UpdateForm();
+
+        // ---> NEW: Tell the Appearance script we are Normal so it turns the HUD back to color <---
+        if (appearanceScript != null)
+        {
+            appearanceScript.UpdateVisuals();
+        }
     }
 
     void UpdateForm()
@@ -121,10 +143,11 @@ public class PlayerTagController : MonoBehaviour
 
         if (isIt)
         {
+            // Note: Your PlayerAppearance script is already handling the SetActive(true/false) 
+            // for the models, but if you want to keep this here for the Animator, that's fine!
             normalModel.SetActive(false);
             itModel.SetActive(true);
 
-            // Grab the Animator from the newly activated IT model
             activeAnim = itModel.GetComponent<Animator>();
         }
         else
@@ -132,14 +155,21 @@ public class PlayerTagController : MonoBehaviour
             itModel.SetActive(false);
             normalModel.SetActive(true);
 
-            // Grab the Animator from the newly activated Normal model
             activeAnim = normalModel.GetComponent<Animator>();
         }
 
-        // Send the active Animator to the PlayerMovement script!
         if (movementScript != null && activeAnim != null)
         {
             movementScript.SetActiveAnimator(activeAnim);
+        }
+    }
+
+    // Add this inside your player script that handles input
+    public void OnPause() // This method name must match your Input Action name!
+    {
+        if (PauseManager.Instance != null)
+        {
+            PauseManager.Instance.TogglePause();
         }
     }
 

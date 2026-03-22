@@ -4,7 +4,7 @@ public class PointOrb : MonoBehaviour
 {
     public int pointValue = 1;
 
-    // ---> NEW: The slot for your sound effect! <---
+    // The slot for your sound effect!
     public AudioClip collectSound;
 
     void OnTriggerEnter(Collider other)
@@ -22,9 +22,11 @@ public class PointOrb : MonoBehaviour
             if (!player.isIt)
             {
                 Debug.Log(player.gameObject.name + " collected an orb! +1 Point.");
-                player.score += pointValue;
 
-                // ---> NEW: Play the sound in the air before destroying the orb! <---
+                // ---> CHANGED: Call the new method so the HUD updates! <---
+                player.AddScore(pointValue);
+
+                // Play the sound in the air before destroying the orb
                 if (collectSound != null)
                 {
                     AudioSource.PlayClipAtPoint(collectSound, transform.position);
