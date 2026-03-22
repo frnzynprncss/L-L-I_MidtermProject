@@ -25176,7 +25176,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5c71c3b1af5c4f438e9808d5264610c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  matchTimeLimit: 30
+  matchTimeLimit: 120
   cutscenePlayer: {fileID: 65860457}
   videoUI: {fileID: 643727568}
   resultDisplayTime: 5
