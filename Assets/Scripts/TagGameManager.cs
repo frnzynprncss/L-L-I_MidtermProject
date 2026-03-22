@@ -146,7 +146,7 @@ public class TagGameManager : MonoBehaviour
                                     .OrderByDescending(g => g.Key)
                                     .ToList();
 
-        string finalLeaderboard = "GAME OVER\n\n";
+        string finalLeaderboard = "GAME OVER\n";
         int rank = 1;
 
         foreach (var group in groupedPlayers)

@@ -33,6 +33,6 @@ public class Animations : MonoBehaviour
     public void Mayo()
     {
         _panel.SetActive(false);
-       // _animator.SetBool("BalikButton", true);
+        //_animator.SetBool("BalikButton", false);
     }
 }

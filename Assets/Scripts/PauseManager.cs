@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.SceneManagement; // Required for loading and restarting scenes
-using UnityEngine.InputSystem; // Required to read the ESC key
+using UnityEngine.SceneManagement;
+using UnityEngine.InputSystem;
 
 public class PauseManager : MonoBehaviour
 {
@@ -10,11 +10,11 @@ public class PauseManager : MonoBehaviour
     [Header("UI Panels")]
     public GameObject pausePanel;
 
-    [Header("First Selected Button (For Controllers)")]
+    [Header("First Selected Button (For Controllers/Keyboard)")]
     public GameObject resumeButton;
 
     [Header("Scene Settings")]
-    public string mainMenuSceneName = "MainMenu"; // Type your actual Main Menu scene name here in the Inspector!
+    public string mainMenuSceneName = "MainMenu";
 
     private bool isPaused = false;
 
@@ -25,13 +25,12 @@ public class PauseManager : MonoBehaviour
 
     void Start()
     {
-        // Make sure the menu is hidden when the game starts
         pausePanel.SetActive(false);
     }
 
     void Update()
     {
-        // Check if a keyboard is plugged in, then check if ESC was pressed this exact frame
+        // Use the new Input System to check for the Escape key
         if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
         {
             TogglePause();
@@ -40,14 +39,8 @@ public class PauseManager : MonoBehaviour
 
     public void TogglePause()
     {
-        if (isPaused)
-        {
-            ResumeGame();
-        }
-        else
-        {
-            PauseGame();
-        }
+        if (isPaused) ResumeGame();
+        else PauseGame();
     }
 
     public void PauseGame()
@@ -55,10 +48,14 @@ public class PauseManager : MonoBehaviour
         isPaused = true;
         pausePanel.SetActive(true);
 
-        // Freezes the game's physics, animations, and timers
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
+        // Freeze the world
         Time.timeScale = 0f;
 
-        // CRITICAL FOR CONTROLLERS: Tell the EventSystem to highlight the Resume button
+        // Force the EventSystem to highlight the resume button immediately
+        // This ensures the "hover/select" state works even without moving the mouse
         EventSystem.current.SetSelectedGameObject(null);
         EventSystem.current.SetSelectedGameObject(resumeButton);
     }
@@ -67,27 +64,21 @@ public class PauseManager : MonoBehaviour
     {
         isPaused = false;
         pausePanel.SetActive(false);
-
-        // Unfreezes the game
         Time.timeScale = 1f;
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
-    // ---> NEW: Restarts the current level <---
     public void RestartGame()
     {
-        // ALWAYS unfreeze time before loading a scene!
         Time.timeScale = 1f;
-
-        // This dynamically finds whatever scene you are currently playing and reloads it
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
-    // ---> NEW: Loads the Main Menu <---
     public void QuitToMainMenu()
     {
         Time.timeScale = 1f;
-
-        // Loads the scene name you typed into the Inspector
         SceneManager.LoadScene(mainMenuSceneName);
     }
 }

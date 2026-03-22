@@ -62,7 +62,7 @@ MonoBehaviour:
   tagRadius: 3.5
   knockbackForce: 15
   tagCooldown: 2
-  stunDuration: 5
+  stunDuration: 1.5
 --- !u!136 &123094732205270267
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -134,8 +134,8 @@ MonoBehaviour:
   anim: {fileID: 0}
   canMove: 1
   audioSource: {fileID: 306982882605844543}
-  jumpSound: {fileID: 0}
-  knockbackSound: {fileID: 0}
+  jumpSound: {fileID: 8300000, guid: 7ebc8e18a213abd4a955620dd325294e, type: 3}
+  knockbackSound: {fileID: 8300000, guid: 67163a6e43fe2db48b7df5169c731b57, type: 3}
 --- !u!114 &-911345181629526684
 MonoBehaviour:
   m_ObjectHideFlags: 0
