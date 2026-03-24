@@ -280,9 +280,9 @@ GameObject:
   - component: {fileID: 105684352}
   - component: {fileID: 105684351}
   - component: {fileID: 105684350}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: 'Cloude MM '
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -6436,6 +6436,7 @@ GameObject:
   m_Component:
   - component: {fileID: 372719733}
   - component: {fileID: 372719734}
+  - component: {fileID: 372719735}
   m_Layer: 0
   m_Name: OrbManager
   m_TagString: Untagged
@@ -6474,6 +6475,102 @@ MonoBehaviour:
     type: 3}
   spawnAreaSize: {x: 128.7, y: -0.5, z: 184}
   spawnInterval: 3
+--- !u!82 &372719735
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 372719731}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: 56a446a4621df8e48980e960bd7a6c39, type: 3}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 1
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &388113697
 GameObject:
   m_ObjectHideFlags: 0
@@ -6860,9 +6957,9 @@ GameObject:
   - component: {fileID: 464790978}
   - component: {fileID: 464790977}
   - component: {fileID: 464790976}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cloude MM  (4)
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -12836,6 +12933,8 @@ MonoBehaviour:
   playerName: Player
   normalModel: {fileID: 1985212270}
   itModel: {fileID: 2006339598}
+  normalSpeed: 6
+  itSpeed: 8
   tagRadius: 2.5
   knockbackForce: 15
   tagCooldown: 2
@@ -13980,9 +14079,9 @@ GameObject:
   - component: {fileID: 1036660628}
   - component: {fileID: 1036660627}
   - component: {fileID: 1036660626}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cloude MM  (1)
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -19127,9 +19226,9 @@ GameObject:
   - component: {fileID: 1149302694}
   - component: {fileID: 1149302693}
   - component: {fileID: 1149302692}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cloude MM  (3)
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -26105,6 +26204,8 @@ MonoBehaviour:
   playerName: Player
   normalModel: {fileID: 1898789524}
   itModel: {fileID: 824780}
+  normalSpeed: 6
+  itSpeed: 8
   tagRadius: 2.5
   knockbackForce: 15
   tagCooldown: 2
