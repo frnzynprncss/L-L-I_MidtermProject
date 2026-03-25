@@ -25,7 +25,7 @@ public class TagGameManager : MonoBehaviour
 
     [Header("Lobby 3D Showcase")]
     public GameObject[] displayModels;
-    public float rotationSpeed = 60f;
+    public float rotationSpeed = 0f;
     private int lastPlayerCount = 0;
 
     [Header("In-Game UI References")]
@@ -73,7 +73,8 @@ public class TagGameManager : MonoBehaviour
 
             foreach (GameObject model in displayModels)
             {
-                if (model != null && model.activeSelf) model.transform.Rotate(Vector3.up * rotationSpeed * Time.deltaTime);
+                //if (model != null && model.activeSelf) model.transform.Rotate(Vector3.up * rotationSpeed * Time.deltaTime);
+                if (model != null && model.activeSelf) model.transform.Rotate(Vector3.up * 0f);
             }
         }
     }
