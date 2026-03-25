@@ -39,7 +39,7 @@ public class TagGameManager : MonoBehaviour
     {
         inputManager = GetComponent<PlayerInputManager>();
 
-        lobbyPanel.SetActive(true);
+        lobbyPanel.SetActive(false);
         if (videoUI != null) videoUI.SetActive(false); // Ensure video is hidden
         if (resultsText != null) resultsText.text = "";
         if (timerText != null) timerText.text = "00:00";
