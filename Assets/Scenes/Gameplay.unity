@@ -14134,7 +14134,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 9100000, guid: ba617710b1030b340af8620534a4f77f, type: 2}
+      objectReference: {fileID: 9100000, guid: fdb06fec54e92ef4598935580f449da0, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -19288,7 +19288,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 9100000, guid: ba617710b1030b340af8620534a4f77f, type: 2}
+      objectReference: {fileID: 9100000, guid: 0845ba3115db2b7428aeb065e934c7be, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -25383,10 +25383,10 @@ RectTransform:
   - {fileID: 1229035426}
   - {fileID: 1794737417}
   - {fileID: 221508854}
+  - {fileID: 1012770828}
   - {fileID: 643727569}
   - {fileID: 699029940}
   - {fileID: 1512989724}
-  - {fileID: 1012770828}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -26532,7 +26532,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1794737417
 RectTransform:
   m_ObjectHideFlags: 0
@@ -26994,7 +26994,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 9100000, guid: ba617710b1030b340af8620534a4f77f, type: 2}
+      objectReference: {fileID: 9100000, guid: 81d8965971f851d468b079c97e8d6757, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
