@@ -25789,7 +25789,6 @@ MonoBehaviour:
   - {fileID: 940818576}
   rotationSpeed: 60
   resultsText: {fileID: 362519937}
-  timerText: {fileID: 2140933350}
 --- !u!82 &1525309190
 AudioSource:
   m_ObjectHideFlags: 0
@@ -25799,7 +25798,8 @@ AudioSource:
   m_GameObject: {fileID: 1525309186}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: -6618818800704486391, guid: 088f67470ebe4d948a208bd7b67e61bd,
+    type: 2}
   m_audioClip: {fileID: 8300000, guid: a3bd73e24051661498e16a11f5a47173, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
@@ -25948,7 +25948,9 @@ MonoBehaviour:
   lobbyUIPanel: {fileID: 1794737416}
   introVideo: {fileID: 1215230770}
   videoScreenDisplay: {fileID: 1215230771}
+  introVideoDuration: 3
   eliminationVideo: {fileID: 760583521}
+  eliminationVideoDuration: 3
   roundDuration: 30
   countdownText: {fileID: 2140933350}
   roundTimerText: {fileID: 744398800}
@@ -27078,14 +27080,14 @@ RectTransform:
   m_GameObject: {fileID: 2140933348}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2.3021, y: 2.3021, z: 2.3021}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1508038548}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: -166.79}
   m_SizeDelta: {x: 700, y: 200}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &2140933350
@@ -28773,7 +28775,7 @@ AudioSource:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1934938610624968002}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: -6618818800704486391, guid: 088f67470ebe4d948a208bd7b67e61bd,
     type: 2}
