@@ -8,15 +8,12 @@ public class PlayerAppearance : MonoBehaviour
 
     private SkinnedMeshRenderer normalRenderer;
     private PlayerTagController tagController;
-
-    // NEW: Keeps track of which HUD belongs to this specific player
     private int myPlayerIndex = -1;
 
     void Awake()
     {
         tagController = GetComponent<PlayerTagController>();
 
-        // Find the renderer on the Normal Mode child
         if (normalModeObject != null)
         {
             normalRenderer = normalModeObject.GetComponentInChildren<SkinnedMeshRenderer>();
@@ -29,8 +26,6 @@ public class PlayerAppearance : MonoBehaviour
 
     void Start()
     {
-        // Because PlayerInputManager spawned this prefab, Start() runs immediately.
-        // Grab the next color in line from the Manager right now!
         if (PlayerColorManager.Instance != null && normalRenderer != null)
         {
             Material assignedMat = PlayerColorManager.Instance.GetNextColor();
@@ -39,7 +34,6 @@ public class PlayerAppearance : MonoBehaviour
             sharedMaterials[1] = assignedMat;
             normalRenderer.materials = sharedMaterials;
 
-            // NEW: Tell the HUD Manager we joined, pass it the color we just grabbed, and save our ID!
             if (GameHUDManager.Instance != null && assignedMat != null)
             {
                 myPlayerIndex = GameHUDManager.Instance.AddPlayerHUD(assignedMat.color);
@@ -50,41 +44,54 @@ public class PlayerAppearance : MonoBehaviour
             Debug.LogError("PlayerColorManager is missing from the scene!");
         }
 
-        // Make sure the correct model and HUD status is showing right from the start
         UpdateVisuals();
     }
 
     public void UpdateVisuals()
     {
-        // Check if the player is currently IT
+        // ==========================================
+        // ---> NEW: INVISIBILITY CLOAK IN LOBBY <---
+        // ==========================================
+        // If the game is still on the main menu, turn everything off!
+        if (MatchFlowManager.Instance != null && MatchFlowManager.Instance.isLobbyPhase)
+        {
+            if (normalModeObject != null) normalModeObject.SetActive(false);
+            if (itModeObject != null) itModeObject.SetActive(false);
+            return; // Stop the code here!
+        }
+
         bool isCurrentlyIt = (tagController != null && tagController.isIt);
 
         if (isCurrentlyIt)
         {
-            // Player is IT: Hide the normal model, show the IT model
-            normalModeObject.SetActive(false);
-            itModeObject.SetActive(true);
+            if (normalModeObject != null) normalModeObject.SetActive(false);
+            if (itModeObject != null) itModeObject.SetActive(true);
         }
         else
         {
-            // Player is Normal: Show the normal model, hide the IT model
-            normalModeObject.SetActive(true);
-            itModeObject.SetActive(false);
+            if (normalModeObject != null) normalModeObject.SetActive(true);
+            if (itModeObject != null) itModeObject.SetActive(false);
         }
 
-        // NEW: Tell the HUD to turn red (or go back to their normal color)
         if (GameHUDManager.Instance != null && myPlayerIndex != -1)
         {
             GameHUDManager.Instance.UpdatePlayerItStatus(myPlayerIndex, isCurrentlyIt);
         }
     }
 
-    // NEW: We need a way to let the Orb system give this specific player points on the HUD
     public void AddScoreToHUD(int newTotalScore)
     {
         if (GameHUDManager.Instance != null && myPlayerIndex != -1)
         {
             GameHUDManager.Instance.UpdatePlayerScore(myPlayerIndex, newTotalScore);
+        }
+    }
+
+    public void RemoveFromHUD()
+    {
+        if (GameHUDManager.Instance != null && myPlayerIndex != -1)
+        {
+            GameHUDManager.Instance.HidePlayerHUD(myPlayerIndex);
         }
     }
 }

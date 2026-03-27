@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PointOrb : MonoBehaviour
 {
@@ -7,9 +7,13 @@ public class PointOrb : MonoBehaviour
     // The slot for your sound effect!
     public AudioClip collectSound;
 
+    // Optional: Adjust this slider in the Inspector if 1.0 is still too quiet
+    [Range(0.1f, 2.0f)]
+    public float volume = 1.0f;
+
     void OnTriggerEnter(Collider other)
     {
-        // 1. Log whatever touched the orb to the Unity Console so we can see it!
+        // 1. Log whatever touched the orb to the Unity Console
         Debug.Log("Orb was touched by: " + other.gameObject.name);
 
         // 2. Use GetComponentInParent just in case a child 3D model bumped the orb
@@ -23,13 +27,15 @@ public class PointOrb : MonoBehaviour
             {
                 Debug.Log(player.gameObject.name + " collected an orb! +1 Point.");
 
-                // ---> CHANGED: Call the new method so the HUD updates! <---
+                // Update the player's score
                 player.AddScore(pointValue);
 
-                // Play the sound in the air before destroying the orb
-                if (collectSound != null)
+                // ---> OPTION C: Play at Camera Position for max volume <---
+                if (collectSound != null && Camera.main != null)
                 {
-                    AudioSource.PlayClipAtPoint(collectSound, transform.position);
+                    // By using Camera.main.transform.position, the sound is 
+                    // right in the "ears" of the player.
+                    AudioSource.PlayClipAtPoint(collectSound, Camera.main.transform.position, volume);
                 }
 
                 // Destroy the orb so it disappears
