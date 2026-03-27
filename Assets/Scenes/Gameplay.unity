@@ -12665,7 +12665,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76c392e42b5098c458856cdf6ecaaaa1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_FirstSelected: {fileID: 524159274}
+  m_FirstSelected: {fileID: 8766773316426373167}
   m_sendNavigationEvents: 1
   m_DragThreshold: 10
 --- !u!4 &725817490
@@ -25946,6 +25946,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   lobbyUIPanel: {fileID: 1794737416}
+  isLobbyPhase: 0
   introVideo: {fileID: 1215230770}
   videoScreenDisplay: {fileID: 1215230771}
   introVideoDuration: 3
@@ -25955,6 +25956,7 @@ MonoBehaviour:
   countdownText: {fileID: 2140933350}
   roundTimerText: {fileID: 744398800}
   winnerText: {fileID: 362519937}
+  inGameHUDContainer: {fileID: 1229035425}
   matchHasStarted: 0
 --- !u!64 &1527734044
 MeshCollider:

@@ -11,6 +11,7 @@ public class MatchFlowManager : MonoBehaviour
 
     [Header("0. Lobby Settings")]
     public GameObject lobbyUIPanel;
+    public bool isLobbyPhase = true; // ---> NEW: Tells the players if they should be invisible
 
     [Header("1. Intro Video Settings")]
     public VideoPlayer introVideo;
@@ -27,6 +28,10 @@ public class MatchFlowManager : MonoBehaviour
     public TextMeshProUGUI roundTimerText;
     public TextMeshProUGUI winnerText;
 
+    // ---> NEW: Drag your main Game HUD container here! <---
+    [Header("4. In-Game HUD Settings")]
+    public GameObject inGameHUDContainer;
+
     public bool matchHasStarted = false;
     private float currentRoundTimer;
 
@@ -37,14 +42,16 @@ public class MatchFlowManager : MonoBehaviour
 
     void Start()
     {
+        isLobbyPhase = false;
+
         if (lobbyUIPanel != null) lobbyUIPanel.SetActive(false);
         if (videoScreenDisplay != null) videoScreenDisplay.gameObject.SetActive(false);
         if (countdownText != null) countdownText.gameObject.SetActive(false);
-
-        // Make sure the round timer is completely hidden at the start!
         if (roundTimerText != null) roundTimerText.gameObject.SetActive(false);
-
         if (winnerText != null) winnerText.gameObject.SetActive(false);
+
+        // Hide the main game HUD while we are in the lobby!
+        if (inGameHUDContainer != null) inGameHUDContainer.SetActive(false);
 
         if (DynamicCamera.Instance != null) DynamicCamera.Instance.SnapToCinematicView();
 
@@ -72,6 +79,17 @@ public class MatchFlowManager : MonoBehaviour
     public void OnStartButtonPressed()
     {
         if (lobbyUIPanel != null) lobbyUIPanel.SetActive(false);
+
+        // ---> NEW: The lobby is officially over! <---
+        isLobbyPhase = false;
+
+        // Force all players to turn their 3D models on behind the video
+        PlayerAppearance[] allAppearances = FindObjectsByType<PlayerAppearance>(FindObjectsSortMode.None);
+        foreach (PlayerAppearance p in allAppearances)
+        {
+            p.UpdateVisuals();
+        }
+
         StartCoroutine(MatchStartSequence());
     }
 
@@ -79,37 +97,37 @@ public class MatchFlowManager : MonoBehaviour
     {
         SetPlayerLock(true);
 
-        // 1. PLAY INTRO VIDEO (Using the new safe method!)
-        // 1. PLAY INTRO VIDEO 
         yield return StartCoroutine(PlayVideoByTimer(introVideo, introVideoDuration));
 
-        // 2. CAMERA SWOOP & COUNTDOWN
         if (DynamicCamera.Instance != null) DynamicCamera.Instance.isTracking = true;
 
-        // This just counts the numbers 3, 2, 1
         yield return StartCoroutine(PlayCountdownNumbers(3f));
 
-        // 3. MATCH START!
         PickRandomIt();
 
         if (countdownText != null) countdownText.text = "GO!";
 
         if (roundTimerText != null) roundTimerText.gameObject.SetActive(true);
+
+        // ---> NEW: Turn on the Game HUD so we can see the player scorecards! <---
+        if (inGameHUDContainer != null) inGameHUDContainer.SetActive(true);
+
         currentRoundTimer = roundDuration;
         matchHasStarted = true;
         SetPlayerLock(false);
 
-        // Hide the "GO!" text after 1 second
         yield return new WaitForSeconds(1f);
         if (countdownText != null) countdownText.gameObject.SetActive(false);
     }
 
     IEnumerator RoundOverSequence()
     {
-        // Freeze the game and hide the timer immediately
         matchHasStarted = false;
         SetPlayerLock(true);
         if (roundTimerText != null) roundTimerText.gameObject.SetActive(false);
+
+        // Hide the player HUDs while the video plays to keep it cinematic
+        if (inGameHUDContainer != null) inGameHUDContainer.SetActive(false);
 
         PlayerTagController[] allPlayers = FindObjectsByType<PlayerTagController>(FindObjectsSortMode.None);
         List<PlayerTagController> survivors = new List<PlayerTagController>();
@@ -118,7 +136,6 @@ public class MatchFlowManager : MonoBehaviour
         {
             if (player.isIt)
             {
-                // Tell the HUD to hide their portrait before destroying them
                 PlayerAppearance appearance = player.GetComponent<PlayerAppearance>();
                 if (appearance != null)
                 {
@@ -133,19 +150,13 @@ public class MatchFlowManager : MonoBehaviour
             }
         }
 
-        yield return null; // Wait 1 frame to ensure the IT is completely deleted
+        yield return null;
 
-        // ==========================================
-        // ---> CHANGED: PLAY VIDEO BEFORE THE WINNER CHECK! <---
-        // ==========================================
         if (eliminationVideo != null && videoScreenDisplay != null)
         {
             yield return StartCoroutine(PlayVideoByTimer(eliminationVideo, eliminationVideoDuration));
         }
 
-        // ==========================================
-        // ---> NOW WE CHECK IF THE GAME IS OVER <---
-        // ==========================================
         if (survivors.Count == 1)
         {
             if (roundTimerText != null) roundTimerText.gameObject.SetActive(false);
@@ -154,20 +165,20 @@ public class MatchFlowManager : MonoBehaviour
                 winnerText.gameObject.SetActive(true);
                 winnerText.text = survivors[0].playerName + " WINS!";
             }
-
-            // The game is over, so we stop the loop here!
             yield break;
         }
 
-        // If there are still more than 1 survivor, the game continues!
         PickRandomIt();
 
-        // Do the 3, 2, 1 numbers again
         yield return StartCoroutine(PlayCountdownNumbers(3f));
 
         if (countdownText != null) countdownText.text = "GO!";
 
         if (roundTimerText != null) roundTimerText.gameObject.SetActive(true);
+
+        // Bring the player HUDs back for the next round!
+        if (inGameHUDContainer != null) inGameHUDContainer.SetActive(true);
+
         currentRoundTimer = roundDuration;
         matchHasStarted = true;
         SetPlayerLock(false);
@@ -212,28 +223,19 @@ public class MatchFlowManager : MonoBehaviour
         }
     }
 
-    
-
-    // ==========================================
-    // ---> THE MANUAL TIMER VIDEO FIX <---
-    // ==========================================
     private IEnumerator PlayVideoByTimer(VideoPlayer vp, float customDuration)
     {
         if (vp != null && videoScreenDisplay != null)
         {
-            // 1. Show screen and reset the video
             videoScreenDisplay.gameObject.SetActive(true);
             vp.isLooping = false;
             vp.Stop();
             vp.time = 0;
 
-            // 2. Hit play
             vp.Play();
 
-            // 3. IGNORE UNITY! Just wait for the exact amount of seconds you typed in the Inspector
             yield return new WaitForSeconds(customDuration);
 
-            // 4. Time is up! Kill the video and hide the screen immediately
             vp.Stop();
             videoScreenDisplay.gameObject.SetActive(false);
         }
