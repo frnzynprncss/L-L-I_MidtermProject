@@ -9,7 +9,7 @@ public class PlayerAppearance : MonoBehaviour
     private SkinnedMeshRenderer normalRenderer;
     private PlayerTagController tagController;
 
-    // NEW: Keeps track of which HUD belongs to this specific player
+    // Keeps track of which HUD belongs to this specific player
     private int myPlayerIndex = -1;
 
     void Awake()
@@ -39,7 +39,7 @@ public class PlayerAppearance : MonoBehaviour
             sharedMaterials[1] = assignedMat;
             normalRenderer.materials = sharedMaterials;
 
-            // NEW: Tell the HUD Manager we joined, pass it the color we just grabbed, and save our ID!
+            // Tell the HUD Manager we joined, pass it the color we just grabbed, and save our ID!
             if (GameHUDManager.Instance != null && assignedMat != null)
             {
                 myPlayerIndex = GameHUDManager.Instance.AddPlayerHUD(assignedMat.color);
@@ -72,19 +72,31 @@ public class PlayerAppearance : MonoBehaviour
             itModeObject.SetActive(false);
         }
 
-        // NEW: Tell the HUD to turn red (or go back to their normal color)
+        // Tell the HUD to turn red (or go back to their normal color)
         if (GameHUDManager.Instance != null && myPlayerIndex != -1)
         {
             GameHUDManager.Instance.UpdatePlayerItStatus(myPlayerIndex, isCurrentlyIt);
         }
     }
 
-    // NEW: We need a way to let the Orb system give this specific player points on the HUD
+    // We need a way to let the Orb system give this specific player points on the HUD
     public void AddScoreToHUD(int newTotalScore)
     {
         if (GameHUDManager.Instance != null && myPlayerIndex != -1)
         {
             GameHUDManager.Instance.UpdatePlayerScore(myPlayerIndex, newTotalScore);
+        }
+    }
+
+    // ==========================================
+    // ---> NEW: REMOVE FROM HUD METHOD <---
+    // ==========================================
+    public void RemoveFromHUD()
+    {
+        // We just use the myPlayerIndex you already set up in Start()!
+        if (GameHUDManager.Instance != null && myPlayerIndex != -1)
+        {
+            GameHUDManager.Instance.HidePlayerHUD(myPlayerIndex);
         }
     }
 }

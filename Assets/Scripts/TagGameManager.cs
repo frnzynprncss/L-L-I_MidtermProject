@@ -30,7 +30,7 @@ public class TagGameManager : MonoBehaviour
 
     [Header("In-Game UI References")]
     public TextMeshProUGUI resultsText;
-    public TextMeshProUGUI timerText;
+    //public TextMeshProUGUI timerText;
 
     private bool matchIsActive = false;
     private PlayerInputManager inputManager;
@@ -39,10 +39,10 @@ public class TagGameManager : MonoBehaviour
     {
         inputManager = GetComponent<PlayerInputManager>();
 
-        lobbyPanel.SetActive(true);
+        lobbyPanel.SetActive(false);
         if (videoUI != null) videoUI.SetActive(false); // Ensure video is hidden
         if (resultsText != null) resultsText.text = "";
-        if (timerText != null) timerText.text = "00:00";
+        //if (timerText != null) timerText.text = "00:00";
 
         startButton.onClick.AddListener(StartMatchButton_Clicked);
 
@@ -114,24 +114,24 @@ public class TagGameManager : MonoBehaviour
             while (currentTime > 0)
             {
                 currentTime -= Time.deltaTime;
-                UpdateTimerDisplay(currentTime);
+                //UpdateTimerDisplay(currentTime);
                 yield return null;
             }
 
             matchIsActive = false;
-            if (timerText != null) timerText.text = "00:00";
+            //if (timerText != null) timerText.text = "00:00";
             CalculateAndDisplayRanks(allPlayers);
         }
     }
 
-    void UpdateTimerDisplay(float timeToDisplay)
-    {
-        if (timerText == null) return;
-        float secondsLeft = Mathf.CeilToInt(timeToDisplay);
-        float minutes = Mathf.FloorToInt(secondsLeft / 60);
-        float seconds = Mathf.FloorToInt(secondsLeft % 60);
-        timerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
-    }
+    //void UpdateTimerDisplay(float timeToDisplay)
+    //{
+    //    if (timerText == null) return;
+    //    float secondsLeft = Mathf.CeilToInt(timeToDisplay);
+    //    float minutes = Mathf.FloorToInt(secondsLeft / 60);
+    //    float seconds = Mathf.FloorToInt(secondsLeft % 60);
+    //    timerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+    //}
 
     IEnumerator ClearResultsText(float delay)
     {
@@ -159,7 +159,7 @@ public class TagGameManager : MonoBehaviour
             rank++;
         }
 
-        if (resultsText != null) resultsText.text = finalLeaderboard;
+        //if (resultsText != null) resultsText.text = finalLeaderboard;
 
         // NEW: Wait a few seconds so players see the text, then play video
         StartCoroutine(PlayVideoSequence());

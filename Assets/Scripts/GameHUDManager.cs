@@ -50,4 +50,17 @@ public class GameHUDManager : MonoBehaviour
             playerPanels[playerIndex].SetItStatus(isIt);
         }
     }
+
+    // ==========================================
+    // ---> NEW: HIDE ELIMINATED PLAYER HUD <---
+    // ==========================================
+    public void HidePlayerHUD(int playerIndex)
+    {
+        // Note: If your list of UI panels is named something other than "playerPanels", 
+        // just change that word here to match your script!
+        if (playerIndex >= 0 && playerIndex < playerPanels.Count)
+        {
+            playerPanels[playerIndex].gameObject.SetActive(false);
+        }
+    }
 }
