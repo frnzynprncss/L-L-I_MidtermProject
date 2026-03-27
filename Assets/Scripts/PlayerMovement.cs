@@ -73,36 +73,39 @@ public class PlayerMovement : MonoBehaviour
 
     void FixedUpdate()
     {
-        // 1. Handle Stuns (Knockback)
+        // HANDLE STUNS
         if (stunTimer > 0)
         {
             stunTimer -= Time.fixedDeltaTime;
             if (stunTimer <= 0) canMove = true;
-            if (anim != null) anim.SetFloat("Speed", 0f);
             return;
         }
 
-        // 2. Handle Stun Freezing
-        if (!canMove)
+        // ---> THE BIG FIX IS HERE <---
+        // Only run movement logic if we are allowed to move.
+        // If we are in the cart (canMove is false), we do NOTHING.
+        if (canMove && !isPlayingCutscene)
         {
-            rb.velocity = new Vector3(0, rb.velocity.y, 0);
+            Vector3 movement = new Vector3(moveInput.x, 0f, moveInput.y) * moveSpeed;
+            movement.y = rb.velocity.y;
+            rb.velocity = movement;
+
+            if (moveInput != Vector2.zero)
+            {
+                Quaternion targetRotation = Quaternion.LookRotation(new Vector3(moveInput.x, 0f, moveInput.y));
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.fixedDeltaTime * 15f);
+            }
+
+            if (anim != null) anim.SetFloat("Speed", moveInput.magnitude);
+        }
+        else
+        {
+            // If we are in the cart, ensure the animator stops running
             if (anim != null) anim.SetFloat("Speed", 0f);
-            return;
+
+            // Do NOT set rb.velocity = Vector3.zero here because the body is Kinematic!
+            // Unity will throw the error if you touch velocity while kinematic.
         }
-
-        // 3. Normal Movement & Cutscene Handling
-        // If we are in a cutscene, moveInput is automatically Vector2.zero because we ignored the controller!
-        Vector3 movement = new Vector3(moveInput.x, 0f, moveInput.y) * moveSpeed;
-        movement.y = rb.velocity.y;
-        rb.velocity = movement;
-
-        if (moveInput != Vector2.zero)
-        {
-            Quaternion targetRotation = Quaternion.LookRotation(new Vector3(moveInput.x, 0f, moveInput.y));
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.fixedDeltaTime * 15f);
-        }
-
-        if (anim != null) anim.SetFloat("Speed", moveInput.magnitude);
     }
 
     bool IsGrounded()

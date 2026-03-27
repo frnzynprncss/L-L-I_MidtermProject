@@ -4,12 +4,12 @@ using UnityEngine.InputSystem;
 public class KaritonController : MonoBehaviour
 {
     [Header("Settings")]
-    public float cartSpeed = 12f; // Faster than the player's 7f
-    public float interactionRadius = 2.5f;
-    public Transform seatPoint; // Create an empty GameObject on the cart for this
+    public float cartSpeed = 12f;
+    public float interactionRadius = 3.5f;
+    public Transform seatPoint;
 
     [Header("References")]
-    private GameObject player;
+    public GameObject player;
     private PlayerMovement playerScript;
     private Rigidbody rb;
     private bool isOccupied = false;
@@ -18,30 +18,35 @@ public class KaritonController : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        // Find the player in the scene
-        player = GameObject.FindGameObjectWithTag("Player");
-        if (player != null) playerScript = player.GetComponent<PlayerMovement>();
+        if (rb != null)
+        {
+            rb.mass = 15f; // Heavier cart is more stable
+            rb.drag = 1.5f;
+            // Stops the cart from falling over sideways
+            rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+        }
     }
 
     void Update()
     {
-        // Check for "F" key press
-        if (Keyboard.current.fKey.wasPressedThisFrame)
+        // 1. Find Player if missing
+        if (player == null)
         {
-            if (isOccupied)
-            {
-                Dismount();
-            }
-            else if (Vector3.Distance(transform.position, player.transform.position) <= interactionRadius)
-            {
-                Mount();
-            }
+            player = GameObject.FindGameObjectWithTag("Player");
+            if (player != null) playerScript = player.GetComponent<PlayerMovement>();
+            return;
         }
 
-        // If occupied, capture the movement input from the Input System
+        // 2. Interaction
+        if (Keyboard.current.fKey.wasPressedThisFrame)
+        {
+            if (isOccupied) ExitCart();
+            else if (Vector3.Distance(transform.position, player.transform.position) <= interactionRadius) EnterCart();
+        }
+
+        // 3. Driving Input
         if (isOccupied)
         {
-            // We read the WASD/LeftStick input directly for the cart
             moveInput = Vector2.zero;
             if (Keyboard.current.wKey.isPressed) moveInput.y = 1;
             if (Keyboard.current.sKey.isPressed) moveInput.y = -1;
@@ -54,57 +59,70 @@ public class KaritonController : MonoBehaviour
     {
         if (isOccupied)
         {
-            // Move the Kariton
-            Vector3 movement = new Vector3(moveInput.x, 0f, moveInput.y).normalized * cartSpeed;
-            rb.velocity = new Vector3(movement.x, rb.velocity.y, movement.z);
+            Vector3 direction = new Vector3(moveInput.x, 0f, moveInput.y).normalized;
 
-            // Rotate the Kariton to face movement direction
-            if (moveInput != Vector2.zero)
+            // Move the cart (Preserve current gravity)
+            rb.velocity = new Vector3(direction.x * cartSpeed, rb.velocity.y, direction.z * cartSpeed);
+
+            if (direction != Vector3.zero)
             {
-                Quaternion targetRotation = Quaternion.LookRotation(new Vector3(moveInput.x, 0f, moveInput.y));
+                Quaternion targetRotation = Quaternion.LookRotation(direction);
                 rb.rotation = Quaternion.Slerp(rb.rotation, targetRotation, Time.fixedDeltaTime * 10f);
+            }
+
+            // Force player to stay in the seat every physics frame
+            if (seatPoint != null)
+            {
+                player.transform.position = seatPoint.position;
+                player.transform.rotation = seatPoint.rotation;
             }
         }
     }
 
-    void Mount()
+    public void EnterCart()
     {
         isOccupied = true;
 
-        // 1. Disable Player Movement
-        playerScript.canMove = false;
-        playerScript.ResetInput();
+        if (playerScript != null)
+        {
+            playerScript.ResetInput();
+            playerScript.canMove = false;
+        }
 
-        // 2. Parent Player to Cart
-        player.transform.SetParent(transform);
+        Rigidbody playerRb = player.GetComponent<Rigidbody>();
+        Collider playerCol = player.GetComponent<Collider>();
 
-        // 3. Position Player on Seat
+        // Disable Player physics so they don't fight the cart
+        if (playerRb != null)
+        {
+            playerRb.isKinematic = true;
+            playerRb.velocity = Vector3.zero;
+        }
+
+        // CRITICAL: Disable collider so the cart doesn't "fly"
+        if (playerCol != null) playerCol.enabled = false;
+
+        player.transform.SetParent(this.transform);
+
         if (seatPoint != null)
         {
             player.transform.position = seatPoint.position;
             player.transform.rotation = seatPoint.rotation;
         }
-
-        // 4. Handle Physics
-        player.GetComponent<Rigidbody>().isKinematic = true;
     }
 
-    void Dismount()
+    public void ExitCart()
     {
         isOccupied = false;
-        playerScript.canMove = true;
         player.transform.SetParent(null);
-        player.GetComponent<Rigidbody>().isKinematic = false;
 
-        // Add this to prevent the "non-kinematic" cart from sliding away
+        Rigidbody playerRb = player.GetComponent<Rigidbody>();
+        Collider playerCol = player.GetComponent<Collider>();
+
+        if (playerRb != null) playerRb.isKinematic = false;
+        if (playerCol != null) playerCol.enabled = true; // Walk again!
+        if (playerScript != null) playerScript.canMove = true;
+
         rb.velocity = Vector3.zero;
-        rb.angularVelocity = Vector3.zero;
-    }
-
-    // Visual aid in Editor to see the interaction range
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, interactionRadius);
     }
 }
