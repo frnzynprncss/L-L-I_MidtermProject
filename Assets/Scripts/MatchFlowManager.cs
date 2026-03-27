@@ -118,7 +118,7 @@ public class MatchFlowManager : MonoBehaviour
         {
             if (player.isIt)
             {
-                // ---> NEW: Tell the HUD to hide their portrait before destroying them! <---
+                // Tell the HUD to hide their portrait before destroying them
                 PlayerAppearance appearance = player.GetComponent<PlayerAppearance>();
                 if (appearance != null)
                 {
@@ -133,8 +133,19 @@ public class MatchFlowManager : MonoBehaviour
             }
         }
 
-        yield return null;
+        yield return null; // Wait 1 frame to ensure the IT is completely deleted
 
+        // ==========================================
+        // ---> CHANGED: PLAY VIDEO BEFORE THE WINNER CHECK! <---
+        // ==========================================
+        if (eliminationVideo != null && videoScreenDisplay != null)
+        {
+            yield return StartCoroutine(PlayVideoByTimer(eliminationVideo, eliminationVideoDuration));
+        }
+
+        // ==========================================
+        // ---> NOW WE CHECK IF THE GAME IS OVER <---
+        // ==========================================
         if (survivors.Count == 1)
         {
             if (roundTimerText != null) roundTimerText.gameObject.SetActive(false);
@@ -143,13 +154,12 @@ public class MatchFlowManager : MonoBehaviour
                 winnerText.gameObject.SetActive(true);
                 winnerText.text = survivors[0].playerName + " WINS!";
             }
+
+            // The game is over, so we stop the loop here!
             yield break;
         }
 
-        // 4. Play the Intermission Video (Using the new safe method!)
-        // 4. Play the Intermission Video 
-        yield return StartCoroutine(PlayVideoByTimer(eliminationVideo, eliminationVideoDuration));
-
+        // If there are still more than 1 survivor, the game continues!
         PickRandomIt();
 
         // Do the 3, 2, 1 numbers again
