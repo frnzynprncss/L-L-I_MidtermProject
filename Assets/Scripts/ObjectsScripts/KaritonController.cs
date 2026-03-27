@@ -1,128 +1,108 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class KaritonController : MonoBehaviour
 {
-    [Header("Settings")]
-    public float cartSpeed = 12f;
-    public float interactionRadius = 3.5f;
-    public Transform seatPoint;
+    public Transform seat;
+    public float speed = 10f;
+    public float turnSpeed = 100f;
 
-    [Header("References")]
-    public GameObject player;
-    private PlayerMovement playerScript;
-    private Rigidbody rb;
     private bool isOccupied = false;
-    private Vector2 moveInput;
-
-    void Start()
-    {
-        rb = GetComponent<Rigidbody>();
-        if (rb != null)
-        {
-            rb.mass = 15f; // Heavier cart is more stable
-            rb.drag = 1.5f;
-            // Stops the cart from falling over sideways
-            rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
-        }
-    }
+    private GameObject passenger;
+    private bool playerIsNearby = false;
+    private GameObject nearbyPlayer;
 
     void Update()
     {
-        // 1. Find Player if missing
-        if (player == null)
-        {
-            player = GameObject.FindGameObjectWithTag("Player");
-            if (player != null) playerScript = player.GetComponent<PlayerMovement>();
-            return;
-        }
-
-        // 2. Interaction
-        if (Keyboard.current.fKey.wasPressedThisFrame)
-        {
-            if (isOccupied) ExitCart();
-            else if (Vector3.Distance(transform.position, player.transform.position) <= interactionRadius) EnterCart();
-        }
-
-        // 3. Driving Input
+        // 1. Logic for when someone is ALREADY RIDING
         if (isOccupied)
         {
-            moveInput = Vector2.zero;
-            if (Keyboard.current.wKey.isPressed) moveInput.y = 1;
-            if (Keyboard.current.sKey.isPressed) moveInput.y = -1;
-            if (Keyboard.current.aKey.isPressed) moveInput.x = -1;
-            if (Keyboard.current.dKey.isPressed) moveInput.x = 1;
+            HandleMovement();
+            if (Input.GetKeyDown(KeyCode.F)) ExitCart();
+        }
+        // 2. Logic for when someone is NEARBY and wants to board
+        else if (playerIsNearby && Input.GetKeyDown(KeyCode.F))
+        {
+            EnterCart(nearbyPlayer);
         }
     }
 
-    void FixedUpdate()
+    private void OnTriggerEnter(Collider foreignObject)
     {
-        if (isOccupied)
+        // Check if the thing entering the zone is the Player
+        if (foreignObject.CompareTag("Player"))
         {
-            Vector3 direction = new Vector3(moveInput.x, 0f, moveInput.y).normalized;
-
-            // Move the cart (Preserve current gravity)
-            rb.velocity = new Vector3(direction.x * cartSpeed, rb.velocity.y, direction.z * cartSpeed);
-
-            if (direction != Vector3.zero)
-            {
-                Quaternion targetRotation = Quaternion.LookRotation(direction);
-                rb.rotation = Quaternion.Slerp(rb.rotation, targetRotation, Time.fixedDeltaTime * 10f);
-            }
-
-            // Force player to stay in the seat every physics frame
-            if (seatPoint != null)
-            {
-                player.transform.position = seatPoint.position;
-                player.transform.rotation = seatPoint.rotation;
-            }
+            playerIsNearby = true;
+            nearbyPlayer = foreignObject.gameObject;
         }
     }
 
-    public void EnterCart()
+    private void OnTriggerExit(Collider foreignObject)
     {
+        if (foreignObject.CompareTag("Player"))
+        {
+            playerIsNearby = false;
+            nearbyPlayer = null;
+        }
+    }
+
+    public void EnterCart(GameObject player)
+    {
+        passenger = player;
         isOccupied = true;
 
-        if (playerScript != null)
+        // 1. Disable player scripts
+        if (passenger.TryGetComponent(out PlayerMovement pm)) pm.enabled = false;
+        if (passenger.TryGetComponent(out CharacterController cc)) cc.enabled = false;
+
+        // 2. STOP THE ANIMATION
+        // Most Unity characters use a parameter called "Speed" or "Forward"
+        if (passenger.TryGetComponent(out Animator anim))
         {
-            playerScript.ResetInput();
-            playerScript.canMove = false;
+            // Reset common animation parameters to 0 so the player stays static/idle
+            anim.SetFloat("Speed", 0f);
+            anim.SetFloat("Horizontal", 0f);
+            anim.SetFloat("Vertical", 0f);
+            // If you use a Boolean for walking, set it to false:
+            // anim.SetBool("isWalking", false);
         }
 
-        Rigidbody playerRb = player.GetComponent<Rigidbody>();
-        Collider playerCol = player.GetComponent<Collider>();
-
-        // Disable Player physics so they don't fight the cart
-        if (playerRb != null)
-        {
-            playerRb.isKinematic = true;
-            playerRb.velocity = Vector3.zero;
-        }
-
-        // CRITICAL: Disable collider so the cart doesn't "fly"
-        if (playerCol != null) playerCol.enabled = false;
-
-        player.transform.SetParent(this.transform);
-
-        if (seatPoint != null)
-        {
-            player.transform.position = seatPoint.position;
-            player.transform.rotation = seatPoint.rotation;
-        }
+        // 3. Parenting logic
+        passenger.transform.SetParent(seat);
+        passenger.transform.localPosition = Vector3.zero;
+        passenger.transform.localRotation = Quaternion.identity;
     }
 
-    public void ExitCart()
+    void HandleMovement()
+    {
+        float move = Input.GetAxis("Vertical") * speed * Time.deltaTime;
+        float turn = Input.GetAxis("Horizontal") * turnSpeed * Time.deltaTime;
+
+        // Change this line: 
+        // Move on the X axis (first parameter) instead of the Z axis (third parameter)
+        transform.Translate(move, 0, 0);
+
+        // Rotation usually stays on the Y axis, but if it spins like a top 
+        // on its side, we may need to adjust this too.
+        transform.Rotate(0, turn, 0);
+    }
+
+    void ExitCart()
     {
         isOccupied = false;
-        player.transform.SetParent(null);
 
-        Rigidbody playerRb = player.GetComponent<Rigidbody>();
-        Collider playerCol = player.GetComponent<Collider>();
+        // 1. Unparent the player
+        passenger.transform.SetParent(null);
 
-        if (playerRb != null) playerRb.isKinematic = false;
-        if (playerCol != null) playerCol.enabled = true; // Walk again!
-        if (playerScript != null) playerScript.canMove = true;
+        // 2. Re-enable player scripts immediately
+        if (passenger.TryGetComponent(out PlayerMovement pm)) pm.enabled = true;
+        if (passenger.TryGetComponent(out CharacterController cc)) cc.enabled = true;
 
-        rb.velocity = Vector3.zero;
+        // 3. Simple Offset: Move the player 2 units to the SIDE of the cart
+        // Using 'transform.forward' here because your cart moves on its 'right' axis
+        // This should put the player next to the cart instead of inside it.
+        passenger.transform.position += transform.forward * 2.0f + Vector3.up * 0.5f;
+
+        // 4. Clear the passenger reference
+        passenger = null;
     }
 }
