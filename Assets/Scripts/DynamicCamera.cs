@@ -6,28 +6,46 @@ public class DynamicCamera : MonoBehaviour
 {
     public static DynamicCamera Instance;
 
+    public bool isTracking = false;
+
     [Header("Camera Targets")]
     public List<Transform> targets = new List<Transform>();
 
     [Header("Position Settings")]
-    public Vector3 offset = new Vector3(0f, 10f, -10f); // How far back and up the camera sits
-    public float smoothTime = 0.5f; // How quickly it moves to the new position
+    public Vector3 offset = new Vector3(0f, 10f, -10f);
+    public float smoothTime = 0.5f;
 
     [Header("Zoom Settings")]
-    public float maxZoomFOV = 10f;  // Most zoomed IN (players are close)
-    public float minZoomFOV = 60f;  // Most zoomed OUT (players are far apart)
-    public float zoomLimiter = 30f; // How far apart players need to be to reach max zoom out
+    public float maxZoomFOV = 10f;
+    public float minZoomFOV = 60f;
+    public float zoomLimiter = 30f;
+
+    // ---> NEW: Your exact Cinematic Coordinates! <---
+    [Header("Cinematic Settings")]
+    public Vector3 cinematicPosition = new Vector3(-2.4f, 78.8f, -85.6f);
+    public Quaternion cinematicRotation = new Quaternion(0.3851689f, -0.06096244f, -0.02938374f, 0.9203615f);
 
     private Vector3 velocity;
     private Camera cam;
+    private Quaternion gameplayRotation;
 
     void Awake()
     {
         Instance = this;
         cam = GetComponent<Camera>();
+
+        // Remember the rotation you set in the Unity Editor for actual gameplay!
+        gameplayRotation = transform.rotation;
     }
 
-    // Players will call this when they spawn into the game
+    // MatchFlowManager will call this to snap the camera to the cinematic spot
+    public void SnapToCinematicView()
+    {
+        isTracking = false;
+        transform.position = cinematicPosition;
+        transform.rotation = cinematicRotation;
+    }
+
     public void AddPlayer(Transform playerTransform)
     {
         if (!targets.Contains(playerTransform))
@@ -36,10 +54,11 @@ public class DynamicCamera : MonoBehaviour
         }
     }
 
-    // We use LateUpdate for cameras so it moves AFTER the players have moved this frame
     void LateUpdate()
     {
-        if (targets.Count == 0) return;
+        targets.RemoveAll(t => t == null);
+
+        if (targets.Count == 0 || !isTracking) return;
 
         MoveCamera();
         ZoomCamera();
@@ -50,42 +69,34 @@ public class DynamicCamera : MonoBehaviour
         Vector3 centerPoint = GetCenterPoint();
         Vector3 newPosition = centerPoint + offset;
 
-        // SmoothDamp glides the camera smoothly rather than snapping it instantly
+        // Smoothly glide the position...
         transform.position = Vector3.SmoothDamp(transform.position, newPosition, ref velocity, smoothTime);
+
+        // ---> NEW: Smoothly tilt the rotation back to normal gameplay mode! <---
+        transform.rotation = Quaternion.Slerp(transform.rotation, gameplayRotation, Time.deltaTime * 2f);
     }
 
     void ZoomCamera()
     {
         float greatestDistance = GetGreatestDistance();
-
-        // Calculate the target FOV based on how far apart the players are
         float targetZoom = Mathf.Lerp(maxZoomFOV, minZoomFOV, greatestDistance / zoomLimiter);
-
-        // Smoothly transition the camera's Field of View
         cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, targetZoom, Time.deltaTime * 5f);
     }
 
     float GetGreatestDistance()
     {
-        // Draw an invisible box around the first player
         Bounds bounds = new Bounds(targets[0].position, Vector3.zero);
-
-        // Stretch the box to include every other player
         for (int i = 0; i < targets.Count; i++)
         {
             bounds.Encapsulate(targets[i].position);
         }
-
-        // Return the largest width of the box
         return bounds.size.x > bounds.size.z ? bounds.size.x : bounds.size.z;
     }
 
     Vector3 GetCenterPoint()
     {
-        // If there's only one player, just look at them
         if (targets.Count == 1) return targets[0].position;
 
-        // Otherwise, find the exact middle of our invisible box
         Bounds bounds = new Bounds(targets[0].position, Vector3.zero);
         for (int i = 0; i < targets.Count; i++)
         {

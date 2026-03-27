@@ -39,6 +39,11 @@ public class PlayerMovement : MonoBehaviour
             int index = playerInput.playerIndex % spawnPoints.Length;
             transform.position = spawnPoints[index].transform.position;
         }
+
+        if (MatchFlowManager.Instance != null)
+        {
+            isPlayingCutscene = !MatchFlowManager.Instance.matchHasStarted;
+        }
     }
 
     void OnMove(InputValue value)
