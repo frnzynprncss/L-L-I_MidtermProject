@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: -4336461019599065600}
   m_Layer: 0
   m_Name: Orb
-  m_TagString: Untagged
+  m_TagString: Orb
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -64,7 +64,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 98bbad5dd669de74f9c3328b8f33eb7e, type: 2}
+  - {fileID: 7624954672228364650, guid: e0d3d3ca24125e04aa6e97854df144c2, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -121,6 +121,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pointValue: 1
   collectSound: {fileID: 8300000, guid: dcfe736b50186de49a2100bc9ab28bbf, type: 3}
+  volume: 1
 --- !u!82 &-4336461019599065600
 AudioSource:
   m_ObjectHideFlags: 0

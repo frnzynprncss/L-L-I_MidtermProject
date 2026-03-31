@@ -5,8 +5,8 @@ using System.Linq;
 using TMPro;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
-using UnityEngine.Video; // Added for Video support
-using UnityEngine.SceneManagement; // Added for Restart support
+using UnityEngine.Video;
+using UnityEngine.SceneManagement;
 
 public class TagGameManager : MonoBehaviour
 {
@@ -14,9 +14,9 @@ public class TagGameManager : MonoBehaviour
     public float matchTimeLimit = 60f;
 
     [Header("Cutscene References")]
-    public VideoPlayer cutscenePlayer; // Drag Video Player here
-    public GameObject videoUI;         // Drag Raw Image here
-    public float resultDisplayTime = 5f; // How long to see text before video starts
+    public VideoPlayer cutscenePlayer;
+    public GameObject videoUI;
+    public float resultDisplayTime = 5f;
 
     [Header("Lobby UI References")]
     public GameObject lobbyPanel;
@@ -30,7 +30,6 @@ public class TagGameManager : MonoBehaviour
 
     [Header("In-Game UI References")]
     public TextMeshProUGUI resultsText;
-    //public TextMeshProUGUI timerText;
 
     private bool matchIsActive = false;
     private PlayerInputManager inputManager;
@@ -40,20 +39,16 @@ public class TagGameManager : MonoBehaviour
         inputManager = GetComponent<PlayerInputManager>();
 
         lobbyPanel.SetActive(false);
-        if (videoUI != null) videoUI.SetActive(false); // Ensure video is hidden
+        if (videoUI != null) videoUI.SetActive(false);
         if (resultsText != null) resultsText.text = "";
-        //if (timerText != null) timerText.text = "00:00";
 
         startButton.onClick.AddListener(StartMatchButton_Clicked);
 
-        // Setup the video restart listener
         if (cutscenePlayer != null)
         {
             cutscenePlayer.loopPointReached += OnVideoFinished;
         }
     }
-
-    // ... (Keep your Update and StartMatchButton_Clicked exactly as they were) ...
 
     void Update()
     {
@@ -73,7 +68,6 @@ public class TagGameManager : MonoBehaviour
 
             foreach (GameObject model in displayModels)
             {
-                //if (model != null && model.activeSelf) model.transform.Rotate(Vector3.up * rotationSpeed * Time.deltaTime);
                 if (model != null && model.activeSelf) model.transform.Rotate(Vector3.up * 0f);
             }
         }
@@ -93,7 +87,7 @@ public class TagGameManager : MonoBehaviour
         float delayTimer = 5f;
         while (delayTimer > 0)
         {
-            if (resultsText != null) resultsText.text = "STARTING IN: " + Mathf.CeilToInt(delayTimer).ToString();
+            if (resultsText != null) resultsText.text = "";
             delayTimer -= Time.deltaTime;
             yield return null;
         }
@@ -107,36 +101,22 @@ public class TagGameManager : MonoBehaviour
             allPlayers[randomIndex].BecomeIt(Vector3.zero);
 
             matchIsActive = true;
-            if (resultsText != null) resultsText.text = "MATCH STARTED!";
-            StartCoroutine(ClearResultsText(2f));
+
+            // ---> REMOVED: "MATCH STARTED" text logic used to be here <---
+
+            // Clear the text immediately instead of waiting for a Coroutine
+            if (resultsText != null) resultsText.text = "";
 
             float currentTime = matchTimeLimit;
             while (currentTime > 0)
             {
                 currentTime -= Time.deltaTime;
-                //UpdateTimerDisplay(currentTime);
                 yield return null;
             }
 
             matchIsActive = false;
-            //if (timerText != null) timerText.text = "00:00";
             CalculateAndDisplayRanks(allPlayers);
         }
-    }
-
-    //void UpdateTimerDisplay(float timeToDisplay)
-    //{
-    //    if (timerText == null) return;
-    //    float secondsLeft = Mathf.CeilToInt(timeToDisplay);
-    //    float minutes = Mathf.FloorToInt(secondsLeft / 60);
-    //    float seconds = Mathf.FloorToInt(secondsLeft % 60);
-    //    timerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
-    //}
-
-    IEnumerator ClearResultsText(float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        if (matchIsActive && resultsText != null) resultsText.text = "";
     }
 
     void CalculateAndDisplayRanks(PlayerTagController[] players)
@@ -159,32 +139,28 @@ public class TagGameManager : MonoBehaviour
             rank++;
         }
 
-        //if (resultsText != null) resultsText.text = finalLeaderboard;
-
         // NEW: Wait a few seconds so players see the text, then play video
         StartCoroutine(PlayVideoSequence());
     }
 
     IEnumerator PlayVideoSequence()
     {
-        yield return new WaitForSeconds(resultDisplayTime); // Wait to read results
+        yield return new WaitForSeconds(resultDisplayTime);
 
         if (videoUI != null && cutscenePlayer != null)
         {
-            resultsText.text = ""; // Clear text so it's not over the video
+            resultsText.text = "";
             videoUI.SetActive(true);
             cutscenePlayer.Play();
         }
         else
         {
-            // If no video is set, just restart after the delay
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
     }
 
     void OnVideoFinished(VideoPlayer vp)
     {
-        // Restart the whole game once the video ends
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }
