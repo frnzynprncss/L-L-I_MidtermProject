@@ -35,15 +35,15 @@ public class DynamicCamera : MonoBehaviour
         cam = GetComponent<Camera>();
 
         // Remember the rotation you set in the Unity Editor for actual gameplay!
-        gameplayRotation = transform.rotation;
+        gameplayRotation = Quaternion.Euler(41.843f, 0f, 0f);
     }
 
     // MatchFlowManager will call this to snap the camera to the cinematic spot
     public void SnapToCinematicView()
     {
         isTracking = false;
-        transform.position = cinematicPosition;
-        transform.rotation = cinematicRotation;
+        //transform.position = cinematicPosition;
+        //transform.rotation = cinematicRotation;
     }
 
     public void AddPlayer(Transform playerTransform)
@@ -104,5 +104,11 @@ public class DynamicCamera : MonoBehaviour
         }
 
         return bounds.center;
+    }
+
+    public void CameraStart()
+    {
+        transform.position = new Vector3(-20.09115f, 66.5f, -76.1f);
+        transform.rotation = Quaternion.Euler(41.843f,0,0);
     }
 }

@@ -103,7 +103,7 @@ public class MatchFlowManager : MonoBehaviour
 
         yield return StartCoroutine(PlayCountdownNumbers(3f));
 
-        PickRandomIt();
+        PickNextIt();
 
         if (countdownText != null) countdownText.text = "GO!";
 
@@ -168,7 +168,7 @@ public class MatchFlowManager : MonoBehaviour
             yield break;
         }
 
-        PickRandomIt();
+        PickNextIt();
 
         yield return StartCoroutine(PlayCountdownNumbers(3f));
 
@@ -187,18 +187,42 @@ public class MatchFlowManager : MonoBehaviour
         if (countdownText != null) countdownText.gameObject.SetActive(false);
     }
 
-    private void PickRandomIt()
+    // ---> CHANGED: Now targets the player with the lowest score! <---
+    private void PickNextIt()
     {
         PlayerTagController[] activePlayers = FindObjectsByType<PlayerTagController>(FindObjectsSortMode.None);
         if (activePlayers.Length == 0) return;
 
+        // 1. Reset everyone to Normal
         foreach (PlayerTagController p in activePlayers)
         {
             p.BecomeNormal();
         }
 
-        int randomWinner = Random.Range(0, activePlayers.Length);
-        activePlayers[randomWinner].BecomeIt(Vector3.zero);
+        // 2. Find out what the absolute lowest score is right now
+        int lowestScore = int.MaxValue;
+        foreach (PlayerTagController p in activePlayers)
+        {
+            if (p.score < lowestScore)
+            {
+                lowestScore = p.score;
+            }
+        }
+
+        // 3. Put everyone who has that lowest score into a tie-breaker list
+        List<PlayerTagController> lowestScoringPlayers = new List<PlayerTagController>();
+        foreach (PlayerTagController p in activePlayers)
+        {
+            if (p.score == lowestScore)
+            {
+                lowestScoringPlayers.Add(p);
+            }
+        }
+
+        // 4. Randomly pick a winner from the tie-breaker list!
+        // (In Round 1, everyone has 0 points, so it just randomly picks from everyone)
+        int randomWinner = Random.Range(0, lowestScoringPlayers.Count);
+        lowestScoringPlayers[randomWinner].BecomeIt(Vector3.zero);
     }
 
     private IEnumerator PlayCountdownNumbers(float duration)
