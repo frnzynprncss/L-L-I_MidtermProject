@@ -184,7 +184,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   audioSource: {fileID: 4000609806556389969}
-  tagSfx: {fileID: 8300000, guid: 75e23902b4e2b0843b8f98894af21774, type: 3}
+  tagSfx: {fileID: 8300000, guid: 046e0d402bf0afb479fb003c6430a8df, type: 3}
   isIt: 0
   score: 0
   playerName: Player

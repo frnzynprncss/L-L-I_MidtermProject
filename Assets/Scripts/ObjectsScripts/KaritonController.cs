@@ -6,6 +6,9 @@ public class KaritonController : MonoBehaviour
     public float speed = 10f;
     public float turnSpeed = 100f;
 
+    [Header("Controls")]
+    public KeyCode interactButton = KeyCode.JoystickButton1; // B Button
+
     private bool isOccupied = false;
     private GameObject passenger;
     private bool playerIsNearby = false;
@@ -13,22 +16,31 @@ public class KaritonController : MonoBehaviour
 
     void Update()
     {
-        // 1. Logic for when someone is ALREADY RIDING
         if (isOccupied)
         {
             HandleMovement();
-            if (Input.GetKeyDown(KeyCode.F)) ExitCart();
+            if (Input.GetKeyDown(interactButton)) ExitCart();
         }
-        // 2. Logic for when someone is NEARBY and wants to board
-        else if (playerIsNearby && Input.GetKeyDown(KeyCode.F))
+        else if (playerIsNearby && Input.GetKeyDown(interactButton))
         {
-            EnterCart(nearbyPlayer);
+            // 1. Get the Tag Controller to see if they are "It"
+            if (nearbyPlayer.TryGetComponent(out PlayerTagController tagController))
+            {
+                // 2. Only allow if NOT "It" (not the Taya)
+                if (!tagController.isIt)
+                {
+                    EnterCart(nearbyPlayer);
+                }
+                else
+                {
+                    Debug.Log("The Taya is not allowed in the Kariton!");
+                }
+            }
         }
     }
 
     private void OnTriggerEnter(Collider foreignObject)
     {
-        // Check if the thing entering the zone is the Player
         if (foreignObject.CompareTag("Player"))
         {
             playerIsNearby = true;
@@ -50,23 +62,23 @@ public class KaritonController : MonoBehaviour
         passenger = player;
         isOccupied = true;
 
-        // 1. Disable player scripts
+        // 1. Disable scripts and physics to lock player in place
         if (passenger.TryGetComponent(out PlayerMovement pm)) pm.enabled = false;
         if (passenger.TryGetComponent(out CharacterController cc)) cc.enabled = false;
 
-        // 2. STOP THE ANIMATION
-        // Most Unity characters use a parameter called "Speed" or "Forward"
+        // IMPORTANT: If player has Rigidbody, make it kinematic so they don't slide
+        if (passenger.TryGetComponent(out Rigidbody rb)) rb.isKinematic = true;
+
+        // 2. Force Animator to stay Idle
         if (passenger.TryGetComponent(out Animator anim))
         {
-            // Reset common animation parameters to 0 so the player stays static/idle
             anim.SetFloat("Speed", 0f);
             anim.SetFloat("Horizontal", 0f);
             anim.SetFloat("Vertical", 0f);
-            // If you use a Boolean for walking, set it to false:
-            // anim.SetBool("isWalking", false);
+            anim.applyRootMotion = false; // Prevents animation from moving the player
         }
 
-        // 3. Parenting logic
+        // 3. Parenting
         passenger.transform.SetParent(seat);
         passenger.transform.localPosition = Vector3.zero;
         passenger.transform.localRotation = Quaternion.identity;
@@ -77,12 +89,7 @@ public class KaritonController : MonoBehaviour
         float move = Input.GetAxis("Vertical") * speed * Time.deltaTime;
         float turn = Input.GetAxis("Horizontal") * turnSpeed * Time.deltaTime;
 
-        // Change this line: 
-        // Move on the X axis (first parameter) instead of the Z axis (third parameter)
         transform.Translate(move, 0, 0);
-
-        // Rotation usually stays on the Y axis, but if it spins like a top 
-        // on its side, we may need to adjust this too.
         transform.Rotate(0, turn, 0);
     }
 
@@ -90,19 +97,17 @@ public class KaritonController : MonoBehaviour
     {
         isOccupied = false;
 
-        // 1. Unparent the player
+        // Restore physics/animator settings
+        if (passenger.TryGetComponent(out Animator anim)) anim.applyRootMotion = true;
+        if (passenger.TryGetComponent(out Rigidbody rb)) rb.isKinematic = false;
+
         passenger.transform.SetParent(null);
 
-        // 2. Re-enable player scripts immediately
         if (passenger.TryGetComponent(out PlayerMovement pm)) pm.enabled = true;
         if (passenger.TryGetComponent(out CharacterController cc)) cc.enabled = true;
 
-        // 3. Simple Offset: Move the player 2 units to the SIDE of the cart
-        // Using 'transform.forward' here because your cart moves on its 'right' axis
-        // This should put the player next to the cart instead of inside it.
+        // Move player slightly outside so they don't get stuck in the cart
         passenger.transform.position += transform.forward * 2.0f + Vector3.up * 0.5f;
-
-        // 4. Clear the passenger reference
         passenger = null;
     }
 }
