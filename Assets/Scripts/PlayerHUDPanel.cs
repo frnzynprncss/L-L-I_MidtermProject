@@ -21,7 +21,7 @@ public class PlayerHUDPanel : MonoBehaviour
     // Call this whenever the player scores a point (like grabbing an orb)
     public void UpdateScore(int newScore)
     {
-        scoreText.text = "Pts: " + newScore;
+        scoreText.text = "Candies: " + newScore;
     }
 
     // Swaps the UI background color to red if they are IT
