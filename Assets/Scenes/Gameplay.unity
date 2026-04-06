@@ -5840,6 +5840,115 @@ MonoBehaviour:
   verticalSpeed: 2
   pointA: {fileID: 1824856988}
   pointB: {fileID: 1371209395}
+--- !u!1 &112007690
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 112007691}
+  - component: {fileID: 112007694}
+  - component: {fileID: 112007693}
+  - component: {fileID: 112007692}
+  m_Layer: 5
+  m_Name: CutScene_introo
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &112007691
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 112007690}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1508038548}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!328 &112007692
+VideoPlayer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 112007690}
+  m_Enabled: 1
+  m_VideoClip: {fileID: 32900000, guid: 67b921e77cd80f04aa5ad55380902c5f, type: 3}
+  m_TargetCameraAlpha: 1
+  m_TargetCamera3DLayout: 0
+  m_TargetCamera: {fileID: 0}
+  m_TargetTexture: {fileID: 0}
+  m_TimeReference: 0
+  m_TargetMaterialRenderer: {fileID: 0}
+  m_TargetMaterialProperty: <noninit>
+  m_RenderMode: 2
+  m_AspectRatio: 2
+  m_DataSource: 0
+  m_TimeUpdateMode: 2
+  m_PlaybackSpeed: 1
+  m_AudioOutputMode: 2
+  m_TargetAudioSources:
+  - {fileID: 0}
+  m_DirectAudioVolumes:
+  - 1
+  m_Url: 
+  m_EnabledAudioTracks: 01
+  m_DirectAudioMutes: 00
+  m_ControlledAudioTrackCount: 1
+  m_PlayOnAwake: 1
+  m_SkipOnDrop: 1
+  m_Looping: 0
+  m_WaitForFirstFrame: 1
+  m_FrameReadyEventEnabled: 0
+  m_VideoShaders: []
+--- !u!114 &112007693
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 112007690}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Texture: {fileID: 8400000, guid: 970d9db360081da43b004a682ec8a24a, type: 2}
+  m_UVRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+--- !u!222 &112007694
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 112007690}
+  m_CullTransparentMesh: 1
 --- !u!64 &130511523
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -16756,7 +16865,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 8400000, guid: 970d9db360081da43b004a682ec8a24a, type: 2}
+  m_Texture: {fileID: 8400000, guid: 250fbdcc1c7be5d48acc995b896c51fa, type: 2}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -30859,7 +30968,7 @@ GameObject:
   - component: {fileID: 1215230771}
   - component: {fileID: 1215230770}
   m_Layer: 5
-  m_Name: CutScene
+  m_Name: CutScene_intro
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -30892,7 +31001,7 @@ VideoPlayer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1215230768}
   m_Enabled: 1
-  m_VideoClip: {fileID: 32900000, guid: 52f2f2d75b5b72c4ea62efacd91e7a3c, type: 3}
+  m_VideoClip: {fileID: 32900000, guid: 67b921e77cd80f04aa5ad55380902c5f, type: 3}
   m_TargetCameraAlpha: 1
   m_TargetCamera3DLayout: 0
   m_TargetCamera: {fileID: 0}
@@ -30940,7 +31049,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 8400000, guid: 970d9db360081da43b004a682ec8a24a, type: 2}
+  m_Texture: {fileID: 8400000, guid: 250fbdcc1c7be5d48acc995b896c51fa, type: 2}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -33887,6 +33996,7 @@ RectTransform:
   - {fileID: 4895908906415517611}
   - {fileID: 1215230769}
   - {fileID: 760583520}
+  - {fileID: 112007691}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -34240,9 +34350,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   lobbyUIPanel: {fileID: 1794737416}
   isLobbyPhase: 0
-  introVideo: {fileID: 1215230770}
-  videoScreenDisplay: {fileID: 1215230771}
-  introVideoDuration: 3
+  introVideo: {fileID: 112007692}
+  videoScreenDisplay: {fileID: 112007693}
+  introVideoDuration: 60
   eliminationVideo: {fileID: 760583521}
   eliminationVideoDuration: 3
   roundDuration: 30
@@ -49676,6 +49786,7 @@ MonoBehaviour:
   seat: {fileID: 2061061191}
   speed: 10
   turnSpeed: 100
+  interactButton: 331
 --- !u!65 &7022897883759112941
 BoxCollider:
   m_ObjectHideFlags: 0
