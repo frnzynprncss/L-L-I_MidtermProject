@@ -34971,7 +34971,7 @@ MonoBehaviour:
   GameTitle: {fileID: 3792344990682178215}
   MainMenu_btns: {fileID: 420420408117118716}
   Timeline_2: {fileID: 528811331}
-  Timeline_1: {fileID: 0}
+  Timeline_1: {fileID: 1135686427}
   OrbManager: {fileID: 372719731}
   lobbyUIPanel: {fileID: 1794737416}
   isLobbyPhase: 0
