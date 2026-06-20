@@ -15,7 +15,7 @@ public class PlayerHUDPanel : MonoBehaviour
     {
         normalColor = playerColor;
         backgroundImage.color = normalColor;
-        scoreText.text = "Pts: 0";
+        scoreText.text = "Candies: 0";
     }
 
     // Call this whenever the player scores a point (like grabbing an orb)

@@ -9,29 +9,37 @@ public class MatchFlowManager : MonoBehaviour
 {
     public static MatchFlowManager Instance;
 
+    public GameObject RestartButton;
+    public GameObject GameTitle;
+    public GameObject MainMenu_btns;
+    public GameObject Timeline_2;
+    public GameObject Timeline_1;
+
+    public GameObject OrbManager;
+
     [Header("0. Lobby Settings")]
     public GameObject lobbyUIPanel;
     public bool isLobbyPhase = false;
 
     [Header("1. Intro Video Settings")]
     public VideoPlayer introVideo;
-    public RawImage introVideoScreenDisplay; // ---> CHANGED: Dedicated Intro Screen
+    public RawImage introVideoScreenDisplay;
     public float introVideoDuration = 6f;
 
-    // ==========================================
-    // ---> NEW: SKIP CUTSCENE SETTINGS <---
-    // ==========================================
     [Header("1a. Intro Skip Settings")]
-    [Tooltip("The exact name of your tag button in the Input Action Asset (e.g., 'Tag', 'Fire', 'Jump')")]
     public string skipActionName = "Tag";
     public float requiredSkipHoldTime = 2f;
-    public GameObject skipUIContainer; // Drag a UI panel here that says "Hold [Button] to Skip"
-    public Slider skipProgressBar;     // (Optional) Drag a UI Slider here to visually show the 2 seconds filling up!
+    public GameObject skipUIContainer;
+    public Slider skipProgressBar;
 
     [Header("2. Intermission / Elimination Video")]
     public VideoPlayer eliminationVideo;
-    public RawImage eliminationVideoScreenDisplay; // ---> NEW: Dedicated Elimination Screen
+    public RawImage eliminationVideoScreenDisplay;
     public float eliminationVideoDuration = 4f;
+
+    
+    [Tooltip("The text that says 'Player X is eliminated!'")]
+    public TextMeshProUGUI eliminationNotificationText;
 
     [Header("3. Round & Timer Settings")]
     public float roundDuration = 30f;
@@ -48,6 +56,7 @@ public class MatchFlowManager : MonoBehaviour
     void Awake()
     {
         Instance = this;
+        
     }
 
     void Start()
@@ -55,11 +64,13 @@ public class MatchFlowManager : MonoBehaviour
         isLobbyPhase = false;
 
         if (lobbyUIPanel != null) lobbyUIPanel.SetActive(false);
-
-        // Hide both video screens and the skip UI
+        Timeline_1.SetActive(false);
         if (introVideoScreenDisplay != null) introVideoScreenDisplay.gameObject.SetActive(false);
         if (eliminationVideoScreenDisplay != null) eliminationVideoScreenDisplay.gameObject.SetActive(false);
         if (skipUIContainer != null) skipUIContainer.SetActive(false);
+
+        // ---> NEW: Hide the elimination text at the start of the game <---
+        if (eliminationNotificationText != null) eliminationNotificationText.gameObject.SetActive(false);
 
         if (countdownText != null) countdownText.gameObject.SetActive(false);
         if (roundTimerText != null) roundTimerText.gameObject.SetActive(false);
@@ -93,7 +104,6 @@ public class MatchFlowManager : MonoBehaviour
     public void OnStartButtonPressed()
     {
         if (lobbyUIPanel != null) lobbyUIPanel.SetActive(false);
-
         isLobbyPhase = false;
 
         PlayerAppearance[] allAppearances = FindObjectsByType<PlayerAppearance>(FindObjectsSortMode.None);
@@ -109,7 +119,6 @@ public class MatchFlowManager : MonoBehaviour
     {
         SetPlayerLock(true);
 
-        // ---> CHANGED: Uses the new Skip System for the intro! <---
         yield return StartCoroutine(PlayIntroVideoWithSkip());
 
         if (DynamicCamera.Instance != null) DynamicCamera.Instance.isTracking = true;
@@ -119,9 +128,7 @@ public class MatchFlowManager : MonoBehaviour
         PickNextIt();
 
         if (countdownText != null) countdownText.text = "GO!";
-
         if (roundTimerText != null) roundTimerText.gameObject.SetActive(true);
-
         if (inGameHUDContainer != null) inGameHUDContainer.SetActive(true);
 
         currentRoundTimer = roundDuration;
@@ -138,15 +145,22 @@ public class MatchFlowManager : MonoBehaviour
         SetPlayerLock(true);
         if (roundTimerText != null) roundTimerText.gameObject.SetActive(false);
 
+        // Hide the player HUDs while the video plays
         if (inGameHUDContainer != null) inGameHUDContainer.SetActive(false);
 
         PlayerTagController[] allPlayers = FindObjectsByType<PlayerTagController>(FindObjectsSortMode.None);
         List<PlayerTagController> survivors = new List<PlayerTagController>();
 
+        // ---> NEW: A blank string to store the loser's name <---
+        string eliminatedPlayerName = "SOMEONE";
+
         foreach (PlayerTagController player in allPlayers)
         {
             if (player.isIt)
             {
+                // ---> NEW: Grab their name right before we destroy them! <---
+                eliminatedPlayerName = player.playerName;
+
                 PlayerAppearance appearance = player.GetComponent<PlayerAppearance>();
                 if (appearance != null)
                 {
@@ -163,12 +177,26 @@ public class MatchFlowManager : MonoBehaviour
 
         yield return null;
 
-        // ---> CHANGED: Elimination video now uses its own dedicated screen <---
+        // ---> NEW: Update the text and show it on screen! <---
+        if (eliminationNotificationText != null)
+        {
+            eliminationNotificationText.text = eliminatedPlayerName + " WAS ELIMINATED!";
+            eliminationNotificationText.gameObject.SetActive(true);
+        }
+
+        // Play the video while the text is on screen
         if (eliminationVideo != null && eliminationVideoScreenDisplay != null)
         {
             yield return StartCoroutine(PlayVideoByTimer(eliminationVideo, eliminationVideoDuration, eliminationVideoScreenDisplay));
         }
 
+        // ---> NEW: The video finished, so hide the text again! <---
+        if (eliminationNotificationText != null)
+        {
+            eliminationNotificationText.gameObject.SetActive(false);
+        }
+
+        // Check for winner
         if (survivors.Count == 1)
         {
             if (roundTimerText != null) roundTimerText.gameObject.SetActive(false);
@@ -176,6 +204,7 @@ public class MatchFlowManager : MonoBehaviour
             {
                 winnerText.gameObject.SetActive(true);
                 winnerText.text = survivors[0].playerName + " WINS!";
+                StartCoroutine(RestartPanel());
             }
             yield break;
         }
@@ -185,9 +214,7 @@ public class MatchFlowManager : MonoBehaviour
         yield return StartCoroutine(PlayCountdownNumbers(3f));
 
         if (countdownText != null) countdownText.text = "GO!";
-
         if (roundTimerText != null) roundTimerText.gameObject.SetActive(true);
-
         if (inGameHUDContainer != null) inGameHUDContainer.SetActive(true);
 
         currentRoundTimer = roundDuration;
@@ -203,27 +230,18 @@ public class MatchFlowManager : MonoBehaviour
         PlayerTagController[] activePlayers = FindObjectsByType<PlayerTagController>(FindObjectsSortMode.None);
         if (activePlayers.Length == 0) return;
 
-        foreach (PlayerTagController p in activePlayers)
-        {
-            p.BecomeNormal();
-        }
+        foreach (PlayerTagController p in activePlayers) p.BecomeNormal();
 
         int lowestScore = int.MaxValue;
         foreach (PlayerTagController p in activePlayers)
         {
-            if (p.score < lowestScore)
-            {
-                lowestScore = p.score;
-            }
+            if (p.score < lowestScore) lowestScore = p.score;
         }
 
         List<PlayerTagController> lowestScoringPlayers = new List<PlayerTagController>();
         foreach (PlayerTagController p in activePlayers)
         {
-            if (p.score == lowestScore)
-            {
-                lowestScoringPlayers.Add(p);
-            }
+            if (p.score == lowestScore) lowestScoringPlayers.Add(p);
         }
 
         int randomWinner = Random.Range(0, lowestScoringPlayers.Count);
@@ -252,9 +270,6 @@ public class MatchFlowManager : MonoBehaviour
         }
     }
 
-    // ==========================================
-    // ---> NEW: INTRO VIDEO WITH SKIP LOGIC <---
-    // ==========================================
     private IEnumerator PlayIntroVideoWithSkip()
     {
         if (introVideo != null && introVideoScreenDisplay != null)
@@ -262,7 +277,6 @@ public class MatchFlowManager : MonoBehaviour
             AudioListener.volume = 0f;
             introVideoScreenDisplay.gameObject.SetActive(true);
 
-            // Show the skip UI
             if (skipUIContainer != null) skipUIContainer.SetActive(true);
             if (skipProgressBar != null) skipProgressBar.value = 0f;
 
@@ -274,28 +288,24 @@ public class MatchFlowManager : MonoBehaviour
             float elapsedVideoTime = 0f;
             float currentHoldTime = 0f;
 
-            // Wait until the video ends naturally, OR the skip timer hits 2 seconds
             while (elapsedVideoTime < introVideoDuration)
             {
                 elapsedVideoTime += Time.deltaTime;
 
-                // Check if everyone is holding the button
                 if (AreAllPlayersHoldingSkip())
                 {
                     currentHoldTime += Time.deltaTime;
                 }
                 else
                 {
-                    currentHoldTime = 0f; // Reset if anyone lets go!
+                    currentHoldTime = 0f;
                 }
 
-                // Update the visual slider if you assigned one
                 if (skipProgressBar != null)
                 {
                     skipProgressBar.value = currentHoldTime / requiredSkipHoldTime;
                 }
 
-                // Did they hold it long enough? SKIP!
                 if (currentHoldTime >= requiredSkipHoldTime)
                 {
                     break;
@@ -304,41 +314,38 @@ public class MatchFlowManager : MonoBehaviour
                 yield return null;
             }
 
-            // Cleanup
             introVideo.Stop();
             introVideoScreenDisplay.gameObject.SetActive(false);
             if (skipUIContainer != null) skipUIContainer.SetActive(false);
             AudioListener.volume = 1f;
+
+            OrbManager.SetActive(true);
         }
+
+
     }
 
-    // Checks every active player to see if they are holding the specified button
     private bool AreAllPlayersHoldingSkip()
     {
         UnityEngine.InputSystem.PlayerInput[] allInputs = FindObjectsByType<UnityEngine.InputSystem.PlayerInput>(FindObjectsSortMode.None);
 
-        // If no one is in the lobby, we can't skip
         if (allInputs.Length == 0) return false;
 
         foreach (var input in allInputs)
         {
             if (input.actions == null) return false;
 
-            // Finds the exact action by the name you type in the Inspector
             UnityEngine.InputSystem.InputAction skipAction = input.actions[skipActionName];
 
-            // If the action isn't currently being held down, stop checking and return false
             if (skipAction == null || !skipAction.IsPressed())
             {
                 return false;
             }
         }
 
-        // If we made it through the whole loop, EVERYONE is holding it!
         return true;
     }
 
-    // ---> CHANGED: Now accepts a specific RawImage so it works for multiple screens <---
     private IEnumerator PlayVideoByTimer(VideoPlayer vp, float customDuration, RawImage displayScreen)
     {
         if (vp != null && displayScreen != null)
@@ -360,4 +367,11 @@ public class MatchFlowManager : MonoBehaviour
             AudioListener.volume = 1f;
         }
     }
+
+    private IEnumerator RestartPanel()
+    {
+        yield return new WaitForSeconds(2f);
+        RestartButton.SetActive(true);
+    }
+
 }
